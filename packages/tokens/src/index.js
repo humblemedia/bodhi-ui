@@ -7,3 +7,4 @@
  */
 
 export { resolveToken, getAllTokens, spatialTokens, communicativeTokens, voiceTokens } from './lookup/poetic-tokens.js';
+export { validateRupa } from './schema/rupa-validator.js';

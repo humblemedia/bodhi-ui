@@ -45,6 +45,7 @@ program
   .description('Compile a brand Rūpa file to CSS custom properties')
   .argument('[file]', 'Path to brand Rūpa JSON file', 'bodhi.rupa.json')
   .option('-o, --output <path>', 'Output CSS file path', 'bodhi-tokens.css')
+  .option('--verbose', 'Show poetic token resolution details')
   .action(tokenCompile);
 
 program

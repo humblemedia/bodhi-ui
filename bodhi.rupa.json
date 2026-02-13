@@ -1,0 +1,146 @@
+{
+  "$schema": "https://bodhi.dev/schemas/rupa-v1.json",
+  "name": "Bodhi Default",
+  "version": "1.0.0",
+
+  "varna": {
+    "primary": "#2563eb",
+    "secondary": "#64748b",
+    "accent": "#8b5cf6",
+    "surface": "#ffffff",
+    "surface-alt": "#f8fafc",
+    "background": "#ffffff",
+    "foreground": "#0f172a",
+    "muted": "#94a3b8",
+    "success": "#16a34a",
+    "warning": "#d97706",
+    "danger": "#dc2626",
+    "info": "#0891b2",
+
+    "dark": {
+      "primary": "#60a5fa",
+      "secondary": "#94a3b8",
+      "accent": "#a78bfa",
+      "surface": "#0f172a",
+      "surface-alt": "#1e293b",
+      "background": "#020617",
+      "foreground": "#f8fafc",
+      "muted": "#475569",
+      "success": "#4ade80",
+      "warning": "#fbbf24",
+      "danger": "#f87171",
+      "info": "#22d3ee"
+    }
+  },
+
+  "lipi": {
+    "family": {
+      "body": "system-ui, -apple-system, sans-serif",
+      "heading": "system-ui, -apple-system, sans-serif",
+      "mono": "ui-monospace, 'Cascadia Code', 'Fira Code', monospace"
+    },
+    "scale": {
+      "japa": "0.75rem",
+      "katha": "1rem",
+      "ghosana": "1.5rem"
+    },
+    "weight": {
+      "normal": "400",
+      "medium": "500",
+      "bold": "700"
+    },
+    "leading": {
+      "tight": "1.25",
+      "normal": "1.5",
+      "relaxed": "1.75"
+    }
+  },
+
+  "akasa": {
+    "sparsa": "0.125rem",
+    "svasa": "0.5rem",
+    "vicara": "1rem",
+    "vistara": "2rem"
+  },
+
+  "pramana": {
+    "content-width": "65ch",
+    "sidebar-width": "16rem",
+    "header-height": "3.5rem",
+    "icon-sm": "1rem",
+    "icon-md": "1.5rem",
+    "icon-lg": "2rem"
+  },
+
+  "sima": {
+    "width": {
+      "thin": "1px",
+      "medium": "2px",
+      "thick": "4px"
+    },
+    "radius": {
+      "none": "0",
+      "sm": "0.25rem",
+      "md": "0.5rem",
+      "lg": "1rem",
+      "full": "9999px"
+    },
+    "color": "#e2e8f0",
+    "focus-ring": "2px solid var(--bodhi-varna-primary)"
+  },
+
+  "chaya": {
+    "sm": "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
+    "md": "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
+    "lg": "0 10px 15px -3px rgba(0, 0, 0, 0.1)",
+    "xl": "0 20px 25px -5px rgba(0, 0, 0, 0.1)"
+  },
+
+  "pratima": {
+    "set": "lucide",
+    "size": {
+      "sm": "1rem",
+      "md": "1.5rem",
+      "lg": "2rem"
+    }
+  },
+
+  "calana": {
+    "duration": {
+      "instant": "0ms",
+      "fast": "100ms",
+      "normal": "200ms",
+      "slow": "500ms"
+    },
+    "easing": {
+      "default": "cubic-bezier(0.4, 0, 0.2, 1)",
+      "in": "cubic-bezier(0.4, 0, 1, 1)",
+      "out": "cubic-bezier(0, 0, 0.2, 1)",
+      "bounce": "cubic-bezier(0.34, 1.56, 0.64, 1)"
+    }
+  },
+
+  "ghanatva": {
+    "compact": {
+      "padding": "0.25rem 0.5rem",
+      "gap": "0.25rem",
+      "font-size": "0.875rem"
+    },
+    "comfortable": {
+      "padding": "0.5rem 1rem",
+      "gap": "0.5rem",
+      "font-size": "1rem"
+    },
+    "spacious": {
+      "padding": "1rem 1.5rem",
+      "gap": "1rem",
+      "font-size": "1rem"
+    }
+  },
+
+  "yukti": {
+    "glass-bg": "rgba(255, 255, 255, 0.1)",
+    "glass-blur": "blur(12px)",
+    "gradient-primary": "linear-gradient(135deg, var(--bodhi-varna-primary), var(--bodhi-varna-accent))"
+  }
+}
