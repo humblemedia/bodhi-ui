@@ -1,0 +1,35 @@
+{
+  "name": "bodhi",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Semantic-first, Buddhist-informed UI framework. When user and publisher interests conflict, Bodhi sides with the user.",
+  "workspaces": [
+    "packages/eslint-plugin-bodhi",
+    "packages/cli",
+    "packages/tokens"
+  ],
+  "scripts": {
+    "test": "npm test --workspaces",
+    "lint": "node packages/cli/src/index.js lint",
+    "build:tokens": "node packages/cli/src/index.js token compile"
+  },
+  "keywords": [
+    "design-ethics",
+    "dark-patterns",
+    "eslint",
+    "ui-framework",
+    "accessibility",
+    "metta",
+    "semantic-html"
+  ],
+  "author": "Andrew (John Q Cryptid)",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/bodhi"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

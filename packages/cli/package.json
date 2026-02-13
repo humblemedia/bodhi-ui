@@ -1,0 +1,15 @@
+{
+  "name": "@bodhi/cli",
+  "version": "0.1.0",
+  "description": "Bodhi CLI — init, lint, token compile, report",
+  "type": "module",
+  "bin": {
+    "bodhi": "src/index.js"
+  },
+  "main": "src/index.js",
+  "dependencies": {
+    "commander": "^12.0.0"
+  },
+  "author": "Andrew (John Q Cryptid)",
+  "license": "MIT"
+}

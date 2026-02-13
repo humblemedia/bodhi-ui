@@ -1,0 +1,33 @@
+{
+  "name": "eslint-plugin-bodhi",
+  "version": "0.1.0",
+  "description": "ESLint plugin detecting dark patterns in web interfaces. Nine design ethics markers with koan-based messages.",
+  "main": "src/index.js",
+  "type": "module",
+  "keywords": [
+    "eslint",
+    "eslintplugin",
+    "dark-patterns",
+    "design-ethics",
+    "accessibility",
+    "gdpr",
+    "consent",
+    "bodhi"
+  ],
+  "author": "Andrew (John Q Cryptid)",
+  "license": "MIT",
+  "peerDependencies": {
+    "eslint": ">=8.0.0"
+  },
+  "devDependencies": {
+    "eslint": "^9.0.0"
+  },
+  "files": [
+    "src/**/*"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/bodhi",
+    "directory": "packages/eslint-plugin-bodhi"
+  }
+}

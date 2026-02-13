@@ -1,0 +1,9 @@
+{
+  "name": "@bodhi/tokens",
+  "version": "0.1.0",
+  "description": "Bodhi Rūpa token system — poetic design tokens with deterministic resolution",
+  "type": "module",
+  "main": "src/index.js",
+  "author": "Andrew (John Q Cryptid)",
+  "license": "MIT"
+}
