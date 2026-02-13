@@ -8,24 +8,29 @@
  * @see https://github.com/yourusername/bodhi
  */
 
-import noConsentErosion from './rules/no-consent-erosion.js';
+import noManufacturedUrgency from './rules/no-manufactured-urgency.js';
 import noObstructedExit from './rules/no-obstructed-exit.js';
+import noAttentionCapture from './rules/no-attention-capture.js';
+import noConsentErosion from './rules/no-consent-erosion.js';
+import noFalseSocialProof from './rules/no-false-social-proof.js';
+import noCognitiveOverload from './rules/no-cognitive-overload.js';
 import noAsymmetricSalience from './rules/no-asymmetric-salience.js';
+import noAnchoringManipulation from './rules/no-anchoring-manipulation.js';
+import noEnforcedContinuity from './rules/no-enforced-continuity.js';
 
 // ─── Rule Registry ────────────────────────────────────────────
-// Proto-Bodhi ships with three rules (M2, M4, M7).
-// Remaining six will be added as detection logic matures.
+// All nine markers of the Bodhi design ethics framework.
 
 const rules = {
-  'no-consent-erosion': noConsentErosion,             // M4
-  'no-obstructed-exit': noObstructedExit,             // M2
-  'no-asymmetric-salience': noAsymmetricSalience,     // M7
-  // 'no-manufactured-urgency': placeholder,           // M1 — planned
-  // 'no-attention-capture': placeholder,              // M3 — planned
-  // 'no-false-social-proof': placeholder,             // M5 — planned
-  // 'no-cognitive-overload': placeholder,             // M6 — planned
-  // 'no-anchoring-manipulation': placeholder,         // M8 — planned
-  // 'no-enforced-continuity': placeholder,            // M9 — planned
+  'no-manufactured-urgency': noManufacturedUrgency,     // M1
+  'no-obstructed-exit': noObstructedExit,                // M2
+  'no-attention-capture': noAttentionCapture,            // M3
+  'no-consent-erosion': noConsentErosion,                // M4
+  'no-false-social-proof': noFalseSocialProof,           // M5
+  'no-cognitive-overload': noCognitiveOverload,          // M6
+  'no-asymmetric-salience': noAsymmetricSalience,        // M7
+  'no-anchoring-manipulation': noAnchoringManipulation,  // M8
+  'no-enforced-continuity': noEnforcedContinuity,        // M9
 };
 
 // ─── Shared Configs ───────────────────────────────────────────
@@ -40,9 +45,15 @@ const configs = {
       bodhi: { rules },
     },
     rules: {
-      'bodhi/no-consent-erosion': ['error', { mode: 'dogmatic', interfaceMode: 'poetic' }],
+      'bodhi/no-manufactured-urgency': ['warn', { mode: 'lenient', interfaceMode: 'poetic' }],
       'bodhi/no-obstructed-exit': ['error', { mode: 'dogmatic', interfaceMode: 'poetic' }],
+      'bodhi/no-attention-capture': ['warn', { mode: 'lenient', interfaceMode: 'poetic' }],
+      'bodhi/no-consent-erosion': ['error', { mode: 'dogmatic', interfaceMode: 'poetic' }],
+      'bodhi/no-false-social-proof': ['error', { mode: 'dogmatic', interfaceMode: 'poetic' }],
+      'bodhi/no-cognitive-overload': ['warn', { mode: 'lenient', interfaceMode: 'poetic' }],
       'bodhi/no-asymmetric-salience': ['error', { mode: 'dogmatic', interfaceMode: 'poetic' }],
+      'bodhi/no-anchoring-manipulation': ['warn', { mode: 'lenient', interfaceMode: 'poetic' }],
+      'bodhi/no-enforced-continuity': ['error', { mode: 'dogmatic', interfaceMode: 'poetic' }],
     },
   },
 
@@ -55,9 +66,15 @@ const configs = {
       bodhi: { rules },
     },
     rules: {
-      'bodhi/no-consent-erosion': ['warn', { mode: 'lenient', interfaceMode: 'semantic' }],
+      'bodhi/no-manufactured-urgency': ['warn', { mode: 'lenient', interfaceMode: 'semantic' }],
       'bodhi/no-obstructed-exit': ['warn', { mode: 'lenient', interfaceMode: 'semantic' }],
+      'bodhi/no-attention-capture': ['warn', { mode: 'lenient', interfaceMode: 'semantic' }],
+      'bodhi/no-consent-erosion': ['warn', { mode: 'lenient', interfaceMode: 'semantic' }],
+      'bodhi/no-false-social-proof': ['warn', { mode: 'lenient', interfaceMode: 'semantic' }],
+      'bodhi/no-cognitive-overload': ['warn', { mode: 'lenient', interfaceMode: 'semantic' }],
       'bodhi/no-asymmetric-salience': ['warn', { mode: 'lenient', interfaceMode: 'semantic' }],
+      'bodhi/no-anchoring-manipulation': ['warn', { mode: 'lenient', interfaceMode: 'semantic' }],
+      'bodhi/no-enforced-continuity': ['warn', { mode: 'lenient', interfaceMode: 'semantic' }],
     },
   },
 
@@ -70,9 +87,15 @@ const configs = {
       bodhi: { rules },
     },
     rules: {
-      'bodhi/no-consent-erosion': ['warn', { mode: 'lenient', interfaceMode: 'raw' }],
+      'bodhi/no-manufactured-urgency': ['warn', { mode: 'lenient', interfaceMode: 'raw' }],
       'bodhi/no-obstructed-exit': ['warn', { mode: 'lenient', interfaceMode: 'raw' }],
+      'bodhi/no-attention-capture': ['warn', { mode: 'lenient', interfaceMode: 'raw' }],
+      'bodhi/no-consent-erosion': ['warn', { mode: 'lenient', interfaceMode: 'raw' }],
+      'bodhi/no-false-social-proof': ['warn', { mode: 'lenient', interfaceMode: 'raw' }],
+      'bodhi/no-cognitive-overload': ['warn', { mode: 'lenient', interfaceMode: 'raw' }],
       'bodhi/no-asymmetric-salience': ['warn', { mode: 'lenient', interfaceMode: 'raw' }],
+      'bodhi/no-anchoring-manipulation': ['warn', { mode: 'lenient', interfaceMode: 'raw' }],
+      'bodhi/no-enforced-continuity': ['warn', { mode: 'lenient', interfaceMode: 'raw' }],
     },
   },
 };
