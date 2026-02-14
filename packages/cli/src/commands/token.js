@@ -85,6 +85,24 @@ const SECTION_META = {
     english: 'Special Treatments',
     description: 'Per-Yantra treatments and effects.',
   },
+  nirmana: {
+    sanskrit: 'Nirmāṇa',
+    devanagari: 'निर्माण',
+    english: 'Structural Defaults',
+    description: 'Default appearance for Aṅga and Maṇḍala components.\nOverride per-brand by changing which tokens are referenced.',
+  },
+};
+
+// ─── Nirmāṇa Component Labels ────────────────────────────
+
+const NIRMANA_LABELS = {
+  siras:    { sanskrit: 'Śiras',    devanagari: 'शिरस्',   english: 'Header' },
+  pada:     { sanskrit: 'Pāda',     devanagari: 'पाद',     english: 'Footer' },
+  garbha:   { sanskrit: 'Garbha',   devanagari: 'गर्भ',    english: 'Body' },
+  bindu:    { sanskrit: 'Bindu',    devanagari: 'बिन्दु',   english: 'Single Focus' },
+  sangraha: { sanskrit: 'Saṅgraha', devanagari: 'सङ्ग्रह',  english: 'Collection' },
+  paricaya: { sanskrit: 'Paricaya', devanagari: 'परिचय',   english: 'Profile' },
+  card:     { sanskrit: 'Card',     devanagari: null,       english: 'Reusable container' },
 };
 
 // ─── Default Values for Optional Categories ─────────────────
@@ -316,6 +334,51 @@ function generateGenericSection(category, data) {
   return { lines, count: Object.keys(tokens).length };
 }
 
+function generateNirmanaSection(rupa) {
+  const lines = [];
+  const nirmana = rupa.nirmana || {};
+
+  lines.push('');
+  lines.push(sectionHeader('nirmana'));
+  lines.push('');
+  lines.push(':root {');
+
+  let count = 0;
+  const components = Object.keys(nirmana);
+
+  for (let i = 0; i < components.length; i++) {
+    const componentKey = components[i];
+    const componentData = nirmana[componentKey];
+
+    // Add component header comment
+    const label = NIRMANA_LABELS[componentKey];
+    if (label) {
+      const devanagariPart = label.devanagari ? ` (${label.devanagari})` : '';
+      lines.push(`  /* ── ${label.sanskrit}${devanagariPart} — ${label.english} ${String('─').repeat(Math.max(0, 45 - label.sanskrit.length - (label.devanagari ? label.devanagari.length + 3 : 0) - label.english.length - 7))} */`);
+    } else {
+      // Fallback for custom components
+      lines.push(`  /* ── ${componentKey} ${String('─').repeat(Math.max(0, 45 - componentKey.length - 4))} */`);
+    }
+
+    // Add properties for this component
+    if (typeof componentData === 'object' && componentData !== null) {
+      for (const [propKey, propValue] of Object.entries(componentData)) {
+        lines.push(`  --bodhi-nirmana-${componentKey}-${propKey}: ${propValue};`);
+        count++;
+      }
+    }
+
+    // Add spacing between components, except after the last one
+    if (i < components.length - 1) {
+      lines.push('');
+    }
+  }
+
+  lines.push('}');
+
+  return { lines, count };
+}
+
 function generateDarkMode(rupa) {
   const dark = rupa.varna?.dark;
   if (!dark || typeof dark !== 'object' || Object.keys(dark).length === 0) {
@@ -460,6 +523,13 @@ export async function tokenCompile(file, options) {
       allLines.push(...result.lines);
       categoryCounts[cat] = result.count;
     }
+  }
+
+  // Nirmana (structural defaults)
+  if (rupa.nirmana && Object.keys(rupa.nirmana).length > 0) {
+    const nirmanaResult = generateNirmanaSection(rupa);
+    allLines.push(...nirmanaResult.lines);
+    categoryCounts.nirmana = nirmanaResult.count;
   }
 
   // Accessibility overrides

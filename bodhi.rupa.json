@@ -11,7 +11,7 @@
     "surface-alt": "#f8fafc",
     "background": "#ffffff",
     "foreground": "#0f172a",
-    "muted": "#94a3b8",
+    "muted": "#64748b",
     "success": "#16a34a",
     "warning": "#d97706",
     "danger": "#dc2626",
@@ -142,5 +142,37 @@
     "glass-bg": "rgba(255, 255, 255, 0.1)",
     "glass-blur": "blur(12px)",
     "gradient-primary": "linear-gradient(135deg, var(--bodhi-varna-primary), var(--bodhi-varna-accent))"
+  },
+
+  "nirmana": {
+    "siras": {
+      "bg": "var(--bodhi-varna-surface-alt)",
+      "border": "var(--bodhi-sima-width-thin) solid var(--bodhi-sima-color)",
+      "color": "var(--bodhi-varna-foreground)"
+    },
+    "pada": {
+      "bg": "var(--bodhi-varna-surface-alt)",
+      "border": "var(--bodhi-sima-width-thin) solid var(--bodhi-sima-color)",
+      "color": "var(--bodhi-varna-muted)"
+    },
+    "garbha": {
+      "bg": "var(--bodhi-varna-surface)"
+    },
+    "bindu": {
+      "bg": "var(--bodhi-varna-surface)"
+    },
+    "sangraha": {
+      "bg": "var(--bodhi-varna-surface)"
+    },
+    "paricaya": {
+      "bg": "var(--bodhi-varna-surface)"
+    },
+    "card": {
+      "bg": "var(--bodhi-varna-surface)",
+      "border": "var(--bodhi-sima-width-thin) solid var(--bodhi-sima-color)",
+      "radius": "var(--bodhi-sima-radius-md)",
+      "shadow": "var(--bodhi-chaya-sm)",
+      "padding": "var(--bodhi-akasa-vicara)"
+    }
   }
 }

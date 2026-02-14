@@ -1,0 +1,238 @@
+/* ════════════════════════════════════════════════════════
+ * John Q Cryptid — Site Styles
+ * Built with Bodhi tokens. No hardcoded values.
+ * ════════════════════════════════════════════════════════ */
+
+/* ── Reset ────────────────────────────────────────────── */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ── Base ─────────────────────────────────────────────── */
+
+body {
+  font-family: var(--bodhi-lipi-family-body);
+  font-size: var(--bodhi-lipi-katha);
+  line-height: var(--bodhi-lipi-leading-normal);
+  color: var(--bodhi-varna-foreground);
+  background-color: var(--bodhi-varna-background);
+}
+
+a {
+  color: var(--bodhi-varna-ahvana);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+a:focus-visible {
+  outline: var(--bodhi-sima-focus-ring);
+  outline-offset: var(--bodhi-akasa-sparsa);
+}
+
+/* ── Utility ──────────────────────────────────────────── */
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ── Śiras (Header) ──────────────────────────────────── */
+
+.siras {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: var(--bodhi-pramana-header-height);
+  padding: 0 var(--bodhi-akasa-vistara);
+  background: var(--bodhi-nirmana-siras-bg);
+  border-bottom: var(--bodhi-nirmana-siras-border);
+  color: var(--bodhi-nirmana-siras-color);
+}
+
+.siras-identity {
+  font-family: var(--bodhi-lipi-family-heading);
+  font-weight: var(--bodhi-lipi-weight-bold);
+  color: var(--bodhi-varna-foreground);
+  text-decoration: none;
+}
+
+.siras-identity:hover {
+  text-decoration: none;
+}
+
+.siras nav {
+  display: flex;
+  gap: var(--bodhi-akasa-vicara);
+}
+
+.siras nav a {
+  color: var(--bodhi-varna-muted);
+  font-size: var(--bodhi-lipi-katha);
+}
+
+.siras nav a:hover {
+  color: var(--bodhi-varna-ahvana);
+  text-decoration: none;
+}
+
+/* ── Pāda (Footer) ───────────────────────────────────── */
+
+.pada {
+  text-align: center;
+  padding: var(--bodhi-akasa-vicara);
+  font-size: var(--bodhi-lipi-japa);
+  background: var(--bodhi-nirmana-pada-bg);
+  border-top: var(--bodhi-nirmana-pada-border);
+  color: var(--bodhi-nirmana-pada-color);
+}
+
+/* ── Saṅgraha (Homepage Collection) ──────────────────── */
+
+.page-home {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.sangraha {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--bodhi-akasa-vistara);
+  padding: var(--bodhi-akasa-vistara);
+}
+
+.sangraha-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  color: var(--bodhi-varna-foreground);
+  background: var(--bodhi-nirmana-card-bg);
+  border: var(--bodhi-nirmana-card-border);
+  border-radius: var(--bodhi-nirmana-card-radius);
+  padding: var(--bodhi-nirmana-card-padding);
+}
+
+.sangraha-card:hover {
+  text-decoration: none;
+  box-shadow: var(--bodhi-nirmana-card-shadow);
+}
+
+.sangraha-card:focus-visible {
+  outline: var(--bodhi-sima-focus-ring);
+  outline-offset: var(--bodhi-akasa-sparsa);
+}
+
+.card-logo {
+  width: 300px;
+  height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--bodhi-sima-radius-md);
+  font-family: var(--bodhi-lipi-family-heading);
+  font-size: var(--bodhi-lipi-ghosana);
+  font-weight: var(--bodhi-lipi-weight-bold);
+  color: var(--bodhi-varna-surface);
+  margin-bottom: var(--bodhi-akasa-svasa);
+}
+
+.card-logo--bodhi {
+  background-color: var(--bodhi-varna-primary);
+}
+
+.card-logo--seva {
+  background-color: var(--bodhi-varna-accent);
+}
+
+.card-logo--upaya {
+  background-color: var(--bodhi-varna-secondary);
+}
+
+.card-name {
+  font-family: var(--bodhi-lipi-family-heading);
+  font-size: var(--bodhi-lipi-ghosana);
+  font-weight: var(--bodhi-lipi-weight-medium);
+  margin-bottom: var(--bodhi-akasa-sparsa);
+}
+
+.card-tagline {
+  font-size: var(--bodhi-lipi-japa);
+  color: var(--bodhi-varna-muted);
+  text-align: center;
+}
+
+/* ── Vicāra (Content Pages) ──────────────────────────── */
+
+.page-content {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.vicara {
+  flex: 1;
+  max-width: var(--bodhi-pramana-content-width);
+  margin: 0 auto;
+  padding: var(--bodhi-akasa-vistara);
+  width: 100%;
+}
+
+.vicara h1 {
+  font-family: var(--bodhi-lipi-family-heading);
+  font-size: var(--bodhi-lipi-ghosana);
+  font-weight: var(--bodhi-lipi-weight-bold);
+  line-height: var(--bodhi-lipi-leading-tight);
+  margin-bottom: var(--bodhi-akasa-vistara);
+}
+
+.vicara p {
+  margin-bottom: var(--bodhi-akasa-vicara);
+  line-height: var(--bodhi-lipi-leading-relaxed);
+}
+
+.vicara-links {
+  margin-top: var(--bodhi-akasa-vistara);
+  padding-top: var(--bodhi-akasa-vicara);
+  border-top: var(--bodhi-sima-width-thin) solid var(--bodhi-sima-color);
+}
+
+.vicara-links a {
+  color: var(--bodhi-varna-ahvana);
+}
+
+/* ── Responsive ──────────────────────────────────────── */
+
+@media (max-width: 768px) {
+  .sangraha {
+    flex-direction: column;
+  }
+
+  .card-logo {
+    width: 200px;
+    height: 200px;
+  }
+
+  .siras {
+    padding: 0 var(--bodhi-akasa-vicara);
+  }
+
+  .vicara {
+    padding: var(--bodhi-akasa-vicara);
+  }
+}
