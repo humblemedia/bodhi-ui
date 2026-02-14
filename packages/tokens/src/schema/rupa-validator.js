@@ -1,11 +1,11 @@
 /**
  * Bodhi Rūpa Schema Validator
  *
- * Validates a brand Rūpa JSON file against the 10 Rūpa categories.
+ * Validates a brand Rūpa JSON file against the 11 Rūpa categories.
  * Returns structured results: { valid, errors, warnings }.
  *
- * The 10 Rūpa (रूप) categories:
- *   varna, lipi, akasa, pramana, sima, chaya, pratima, calana, ghanatva, yukti
+ * The 11 Rūpa (रूप) categories:
+ *   varna, lipi, akasa, pramana, sima, chaya, pratima, calana, ghanatva, yukti, nirmana
  */
 
 import { spatialTokens, voiceTokens } from '../lookup/poetic-tokens.js';
@@ -13,7 +13,7 @@ import { spatialTokens, voiceTokens } from '../lookup/poetic-tokens.js';
 const REQUIRED_CATEGORIES = ['varna', 'lipi', 'akasa'];
 
 const OPTIONAL_CATEGORIES = [
-  'pramana', 'sima', 'chaya', 'pratima', 'calana', 'ghanatva', 'yukti',
+  'pramana', 'sima', 'chaya', 'pratima', 'calana', 'ghanatva', 'yukti', 'nirmana',
 ];
 
 const ALL_CATEGORIES = [...REQUIRED_CATEGORIES, ...OPTIONAL_CATEGORIES];
@@ -31,6 +31,7 @@ const CATEGORY_META = {
   calana:   { sanskrit: 'Calana',    purpose: 'Motion' },
   ghanatva: { sanskrit: 'Ghanatva',  purpose: 'Density' },
   yukti:    { sanskrit: 'Yukti',     purpose: 'Special treatments' },
+  nirmana:  { sanskrit: 'Nirmāṇa',  purpose: 'Structural defaults' }
 };
 
 /** Valid poetic spatial token keys (for akasa) */
