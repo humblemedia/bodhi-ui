@@ -21,6 +21,10 @@ import {
   CATEGORY_META,
   ALL_CATEGORIES,
 } from '../../../tokens/src/schema/rupa-validator.js';
+import {
+  contrastRatio,
+  adjustForContrast,
+} from '../../../tokens/src/contrast.js';
 
 // ─── Category Section Metadata ──────────────────────────────
 
@@ -180,6 +184,219 @@ function cssLine(prop, value) {
   return `:root { ${prop}: ${value}; }`;
 }
 
+// ─── Contrast Adjustment Helpers ────────────────────────────
+
+/**
+ * Build a map of all resolved color values from the Rūpa file.
+ * Resolves var() references to actual hex values.
+ */
+function buildColorMap(rupa) {
+  const colorMap = {};
+  
+  // Base varna colors
+  if (rupa.varna && typeof rupa.varna === 'object') {
+    for (const [key, value] of Object.entries(rupa.varna)) {
+      if (key === 'dark') continue;
+      if (typeof value === 'string' && value.startsWith('#')) {
+        colorMap[key] = value;
+      }
+    }
+  }
+  
+  // Communicative tokens - resolve var() references
+  for (const [name, token] of Object.entries(communicativeTokens)) {
+    const value = token.defaultValue;
+    if (value.startsWith('var(--bodhi-varna-')) {
+      const varnaKey = value.match(/var\(--bodhi-varna-(\w+)\)/)?.[1];
+      if (varnaKey && colorMap[varnaKey]) {
+        colorMap[name] = colorMap[varnaKey];
+      }
+    }
+  }
+  
+  return colorMap;
+}
+
+/**
+ * Build dark mode color map
+ */
+function buildDarkColorMap(rupa) {
+  const colorMap = {};
+  
+  if (rupa.varna?.dark && typeof rupa.varna.dark === 'object') {
+    for (const [key, value] of Object.entries(rupa.varna.dark)) {
+      if (typeof value === 'string' && value.startsWith('#')) {
+        colorMap[key] = value;
+      }
+    }
+  }
+  
+  // Communicative tokens in dark mode
+  for (const [name, token] of Object.entries(communicativeTokens)) {
+    const value = token.defaultValue;
+    if (value.startsWith('var(--bodhi-varna-')) {
+      const varnaKey = value.match(/var\(--bodhi-varna-(\w+)\)/)?.[1];
+      if (varnaKey && colorMap[varnaKey]) {
+        colorMap[name] = colorMap[varnaKey];
+      }
+    }
+  }
+  
+  return colorMap;
+}
+
+/**
+ * Resolve a var() reference to a hex color
+ */
+function resolveVarToHex(varString, colorMap) {
+  if (!varString || typeof varString !== 'string') return null;
+  
+  // Already a hex color
+  if (varString.startsWith('#')) return varString;
+  
+  // Extract variable name from var(--bodhi-varna-xxx)
+  const match = varString.match(/var\(--bodhi-varna-(\w+(?:-\w+)?)\)/);
+  if (!match) return null;
+  
+  const key = match[1];
+  return colorMap[key] || null;
+}
+
+/**
+ * Text roles to check for contrast
+ */
+const TEXT_ROLES = [
+  { name: 'foreground', source: 'foreground' },
+  { name: 'muted', source: 'muted' },
+  { name: 'link', source: 'ahvana' },
+];
+
+/**
+ * Check and generate contrast adjustments for nirmana components
+ */
+function generateContrastAdjustments(rupa, colorMap, isDarkMode = false) {
+  const adjustments = [];
+  const nirmana = rupa.nirmana || {};
+  
+  for (const [componentKey, componentData] of Object.entries(nirmana)) {
+    if (!componentData || typeof componentData !== 'object') continue;
+    if (!componentData.bg) continue;
+    
+    // Resolve background color
+    const bgHex = resolveVarToHex(componentData.bg, colorMap);
+    if (!bgHex) continue;
+    
+    // First, check if component has an explicit 'color' property
+    if (componentData.color) {
+      const colorHex = resolveVarToHex(componentData.color, colorMap);
+      if (colorHex) {
+        const ratio = contrastRatio(colorHex, bgHex);
+        
+        if (ratio < 7.0) {
+          const adjustedHex = adjustForContrast(colorHex, bgHex, 7.0);
+          
+          if (adjustedHex && adjustedHex !== colorHex) {
+            const newRatio = contrastRatio(adjustedHex, bgHex);
+            adjustments.push({
+              component: componentKey,
+              role: '', // No role suffix for base color property
+              source: 'color',
+              bgHex,
+              originalHex: colorHex,
+              adjustedHex,
+              originalRatio: ratio,
+              newRatio,
+            });
+          }
+        }
+      }
+    }
+    
+    // Then check each text role
+    for (const role of TEXT_ROLES) {
+      // Skip if developer provided an explicit override
+      const overrideKey = `color-${role.name}`;
+      if (componentData[overrideKey]) continue;
+      
+      // Get text color from color map
+      const textHex = colorMap[role.source];
+      if (!textHex) continue;
+      
+      // Check contrast
+      const ratio = contrastRatio(textHex, bgHex);
+      
+      // If contrast is insufficient, adjust
+      if (ratio < 7.0) {
+        const adjustedHex = adjustForContrast(textHex, bgHex, 7.0);
+        
+        if (adjustedHex && adjustedHex !== textHex) {
+          const newRatio = contrastRatio(adjustedHex, bgHex);
+          adjustments.push({
+            component: componentKey,
+            role: role.name,
+            source: role.source,
+            bgHex,
+            originalHex: textHex,
+            adjustedHex,
+            originalRatio: ratio,
+            newRatio,
+          });
+        }
+      }
+    }
+  }
+  
+  return adjustments;
+}
+
+/**
+ * Generate CSS for contrast adjustments
+ */
+function generateContrastAdjustmentCSS(adjustments, isDarkMode = false) {
+  if (adjustments.length === 0) return { lines: [], count: 0 };
+  
+  const lines = [];
+  lines.push('');
+  lines.push('/* ── Nirmāṇa: Contrast-Adjusted Colors ─────── */');
+  lines.push('/* Auto-calculated for AAA compliance (7:1 minimum) */');
+  lines.push('');
+  
+  // Group by component
+  const byComponent = {};
+  for (const adj of adjustments) {
+    if (!byComponent[adj.component]) {
+      byComponent[adj.component] = [];
+    }
+    byComponent[adj.component].push(adj);
+  }
+  
+  for (const [componentKey, compAdjustments] of Object.entries(byComponent)) {
+    const label = NIRMANA_LABELS[componentKey];
+    const componentName = label ? `${label.sanskrit} (${componentKey})` : componentKey;
+    const bgHex = compAdjustments[0].bgHex;
+    
+    lines.push(`/* ${componentName} on ${bgHex} */`);
+    lines.push(':root {');
+    
+    for (const adj of compAdjustments) {
+      const comment = `  /* adjusted from ${adj.originalHex} (was ${adj.originalRatio.toFixed(1)}:1 → now ${adj.newRatio.toFixed(1)}:1) */`;
+      lines.push(comment);
+      
+      // Generate token name based on whether it's a role or base color
+      const tokenName = adj.role 
+        ? `--bodhi-nirmana-${adj.component}-color-${adj.role}`
+        : `--bodhi-nirmana-${adj.component}-color`;
+      
+      lines.push(`  ${tokenName}: ${adj.adjustedHex};`);
+    }
+    
+    lines.push('}');
+    lines.push('');
+  }
+  
+  return { lines, count: adjustments.length };
+}
+
 // ─── CSS Generation ─────────────────────────────────────────
 
 function generateFileHeader(rupa) {
@@ -334,7 +551,7 @@ function generateGenericSection(category, data) {
   return { lines, count: Object.keys(tokens).length };
 }
 
-function generateNirmanaSection(rupa) {
+function generateNirmanaSection(rupa, adjustments = []) {
   const lines = [];
   const nirmana = rupa.nirmana || {};
 
@@ -345,6 +562,15 @@ function generateNirmanaSection(rupa) {
 
   let count = 0;
   const components = Object.keys(nirmana);
+  
+  // Build a set of component properties that will be adjusted
+  const adjustedProps = new Set();
+  for (const adj of adjustments) {
+    if (!adj.role) {
+      // This is a base color adjustment
+      adjustedProps.add(`${adj.component}-color`);
+    }
+  }
 
   for (let i = 0; i < components.length; i++) {
     const componentKey = components[i];
@@ -363,6 +589,12 @@ function generateNirmanaSection(rupa) {
     // Add properties for this component
     if (typeof componentData === 'object' && componentData !== null) {
       for (const [propKey, propValue] of Object.entries(componentData)) {
+        // Skip color property if it will be adjusted
+        const propId = `${componentKey}-${propKey}`;
+        if (adjustedProps.has(propId)) {
+          continue;
+        }
+        
         lines.push(`  --bodhi-nirmana-${componentKey}-${propKey}: ${propValue};`);
         count++;
       }
@@ -526,10 +758,76 @@ export async function tokenCompile(file, options) {
   }
 
   // Nirmana (structural defaults)
+  let contrastAdjustments = [];
   if (rupa.nirmana && Object.keys(rupa.nirmana).length > 0) {
-    const nirmanaResult = generateNirmanaSection(rupa);
+    // Calculate contrast adjustments first
+    const colorMap = buildColorMap(rupa);
+    contrastAdjustments = generateContrastAdjustments(rupa, colorMap, false);
+    
+    // Generate nirmana section, skipping properties that will be adjusted
+    const nirmanaResult = generateNirmanaSection(rupa, contrastAdjustments);
     allLines.push(...nirmanaResult.lines);
     categoryCounts.nirmana = nirmanaResult.count;
+    
+    // Output the adjusted tokens
+    if (contrastAdjustments.length > 0) {
+      const contrastResult = generateContrastAdjustmentCSS(contrastAdjustments, false);
+      allLines.push(...contrastResult.lines);
+      categoryCounts['nirmana (adjusted)'] = contrastResult.count;
+    }
+  }
+  
+  // Dark mode contrast adjustments
+  let darkContrastAdjustments = [];
+  if (rupa.varna?.dark && rupa.nirmana) {
+    const darkColorMap = buildDarkColorMap(rupa);
+    darkContrastAdjustments = generateContrastAdjustments(rupa, darkColorMap, true);
+    
+    if (darkContrastAdjustments.length > 0) {
+      const lines = [];
+      lines.push('');
+      lines.push('/* ── Nirmāṇa: Dark Mode Contrast Adjustments ── */');
+      lines.push('');
+      lines.push('@media (prefers-color-scheme: dark) {');
+      
+      // Group by component
+      const byComponent = {};
+      for (const adj of darkContrastAdjustments) {
+        if (!byComponent[adj.component]) {
+          byComponent[adj.component] = [];
+        }
+        byComponent[adj.component].push(adj);
+      }
+      
+      for (const [componentKey, compAdjustments] of Object.entries(byComponent)) {
+        const label = NIRMANA_LABELS[componentKey];
+        const componentName = label ? `${label.sanskrit} (${componentKey})` : componentKey;
+        const bgHex = compAdjustments[0].bgHex;
+        
+        lines.push(`  /* ${componentName} on ${bgHex} */`);
+        lines.push('  :root {');
+        
+        for (const adj of compAdjustments) {
+          const comment = `    /* adjusted from ${adj.originalHex} (was ${adj.originalRatio.toFixed(1)}:1 → now ${adj.newRatio.toFixed(1)}:1) */`;
+          lines.push(comment);
+          
+          // Generate token name based on whether it's a role or base color
+          const tokenName = adj.role 
+            ? `--bodhi-nirmana-${adj.component}-color-${adj.role}`
+            : `--bodhi-nirmana-${adj.component}-color`;
+          
+          lines.push(`    ${tokenName}: ${adj.adjustedHex};`);
+        }
+        
+        lines.push('  }');
+        lines.push('');
+      }
+      
+      lines.push('}');
+      
+      allLines.push(...lines);
+      categoryCounts['nirmana (dark adjusted)'] = darkContrastAdjustments.length;
+    }
   }
 
   // Accessibility overrides
@@ -556,6 +854,32 @@ export async function tokenCompile(file, options) {
   console.log(`    ${'total'.padEnd(16)} ${totalTokens}`);
   console.log('');
   console.log(`  Compiled ${totalTokens} tokens → ${outputPath} (${fileSizeKB} KB)`);
+  console.log('');
+  
+  // ── Contrast report ───────────────────────────────────────
+  const allAdjustments = [...contrastAdjustments, ...darkContrastAdjustments];
+  if (allAdjustments.length > 0) {
+    console.log('  Contrast adjustments (AAA 7:1):');
+    
+    // Group by component for display
+    const byComponent = {};
+    for (const adj of allAdjustments) {
+      const key = `${adj.component}-${adj.role}`;
+      if (!byComponent[key]) {
+        byComponent[key] = adj;
+      }
+    }
+    
+    for (const adj of Object.values(byComponent)) {
+      const componentPad = adj.component.padEnd(12);
+      const rolePad = adj.role.padEnd(10);
+      console.log(`    ${componentPad} ${rolePad} ${adj.originalHex} → ${adj.adjustedHex}  (was ${adj.originalRatio.toFixed(1)}:1, now ${adj.newRatio.toFixed(1)}:1)`);
+    }
+    console.log('');
+  } else if (rupa.nirmana && Object.keys(rupa.nirmana).length > 0) {
+    console.log('  ✓ All text colors pass AAA contrast (7:1)');
+    console.log('');
+  }
 
   // ── Verbose: poetic token details ─────────────────────
   if (verbose) {

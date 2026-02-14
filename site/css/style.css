@@ -79,12 +79,12 @@ a:focus-visible {
 }
 
 .siras nav a {
-  color: var(--bodhi-varna-muted);
+  color: var(--bodhi-varna-foreground);
   font-size: var(--bodhi-lipi-katha);
 }
 
 .siras nav a:hover {
-  color: var(--bodhi-varna-ahvana);
+  color: var(--bodhi-nirmana-siras-link-color, var(--bodhi-varna-ahvana));
   text-decoration: none;
 }
 
@@ -97,6 +97,15 @@ a:focus-visible {
   background: var(--bodhi-nirmana-pada-bg);
   border-top: var(--bodhi-nirmana-pada-border);
   color: var(--bodhi-nirmana-pada-color);
+}
+
+.pada a {
+  color: var(--bodhi-nirmana-pada-link-color, var(--bodhi-varna-ahvana));
+}
+
+.pada .muted-text,
+.pada small {
+  color: var(--bodhi-nirmana-pada-color-muted, var(--bodhi-varna-muted));
 }
 
 /* ── Saṅgraha (Homepage Collection) ──────────────────── */
@@ -172,7 +181,7 @@ a:focus-visible {
 }
 
 .card-tagline {
-  font-size: var(--bodhi-lipi-japa);
+  font-size: var(--bodhi-lipi-katha);
   color: var(--bodhi-varna-muted);
   text-align: center;
 }
