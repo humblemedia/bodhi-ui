@@ -6,6 +6,6 @@
   "description": "Cetanā — Bodhi's reactive layer. Signals, computed values, keyed lists, component lifecycle.",
   "main": "src/index.js",
   "scripts": {
-    "test": "node --test test/"
+    "test": "node --test test/*.test.js"
   }
 }

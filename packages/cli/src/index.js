@@ -8,6 +8,7 @@
  *   bodhi lint [files...]         Run design ethics linting
  *   bodhi token compile [file]    Compile Rūpa tokens to CSS
  *   bodhi report [files...]       Generate marker violation report
+ *   bodhi compile <spec>          Compile Bodhi YAML spec to HTML + CSS + JS
  */
 
 import { Command } from 'commander';
@@ -15,6 +16,7 @@ import { init } from './commands/init.js';
 import { lint } from './commands/lint.js';
 import { tokenCompile } from './commands/token.js';
 import { report } from './commands/report.js';
+import { compileCommand } from './commands/compile.js';
 
 const program = new Command();
 
@@ -55,5 +57,13 @@ program
   .option('-f, --format <format>', 'Report format: text, json, or html', 'text')
   .option('-o, --output <path>', 'Output file path (stdout if omitted)')
   .action(report);
+
+program
+  .command('compile')
+  .description('Compile a Bodhi YAML component spec to semantic HTML + CSS + JS')
+  .argument('<spec>', 'Path to .bodhi.yaml component spec')
+  .option('-o, --output <dir>', 'Output directory', 'dist')
+  .option('--no-js', 'Skip JS output (static-only compilation)')
+  .action(compileCommand);
 
 program.parse();

@@ -7,7 +7,7 @@
   "main": "src/index.html",
   "scripts": {
     "build": "node build.js",
-    "test": "node --test test/"
+    "test": "node --test test/*.test.js"
   },
   "dependencies": {
     "browser-fs-access": "^0.35.0",
