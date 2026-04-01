@@ -1,0 +1,11 @@
+{
+  "name": "@bodhi/cetana",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Cetanā — Bodhi's reactive layer. Signals, computed values, keyed lists, component lifecycle.",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "node --test test/"
+  }
+}
