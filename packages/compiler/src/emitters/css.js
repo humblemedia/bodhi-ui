@@ -66,5 +66,21 @@ export function emitCss(spec) {
     lines.push('');
   }
 
+  // Accessibility: focus-visible styles for keyboard navigation
+  lines.push('/* Accessibility: keyboard focus indicators */');
+  lines.push('');
+  lines.push('.kriya:focus-visible, .pravesa:focus-visible, [role="tab"]:focus-visible {');
+  lines.push('  outline: 2px solid currentColor;');
+  lines.push('  outline-offset: 2px;');
+  lines.push('}');
+  lines.push('');
+  lines.push('/* Accessibility: reduced motion */');
+  lines.push('@media (prefers-reduced-motion: reduce) {');
+  lines.push('  .mudra-cala {');
+  lines.push('    transition-duration: 0ms;');
+  lines.push('  }');
+  lines.push('}');
+  lines.push('');
+
   return lines.join('\n');
 }

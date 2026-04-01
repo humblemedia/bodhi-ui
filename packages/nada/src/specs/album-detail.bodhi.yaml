@@ -6,6 +6,8 @@ class: album-detail
 children:
   - yantra: Panthā
     class: breadcrumb
+    attributes:
+      aria-label: "Breadcrumb"
     children:
       - yantra: Kriyā
         class: breadcrumb-link

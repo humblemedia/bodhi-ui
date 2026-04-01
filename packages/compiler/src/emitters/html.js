@@ -94,10 +94,17 @@ function buildAttributes(node, yantra) {
     }
   }
 
-  // Explicit attributes from spec
+  // Explicit attributes from spec (override Yantra defaults)
   if (node.attributes) {
     for (const [k, v] of Object.entries(node.attributes)) {
-      if (k === 'role' || k === 'class') continue; // handled above
+      if (k === 'class') continue; // class handled above
+      if (k === 'role') {
+        // Replace the Yantra's default role with the explicit one
+        const roleIdx = attrs.findIndex(a => a.startsWith('role="'));
+        if (roleIdx >= 0) attrs[roleIdx] = `role="${v}"`;
+        else attrs.push(`role="${v}"`);
+        continue;
+      }
       attrs.push(`${k}="${v}"`);
     }
   }
