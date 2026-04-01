@@ -1,0 +1,20 @@
+# Nāda Artists View
+component: ArtistsView
+yantra: Saṅgraha
+mudras: [Jāla]
+class: artists-grid
+bind: artistCards
+
+children:
+  - yantra: Bindu
+    class: artist-card
+    mudras: [Cala]
+    children:
+      - yantra: Vākya
+        element: h3
+        class: artist-name
+        bind: artistName
+      - yantra: Vākya
+        class: artist-count
+        bind: albumCount
+    on: { click: selectArtist }

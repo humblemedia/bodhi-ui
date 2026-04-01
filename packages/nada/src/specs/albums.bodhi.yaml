@@ -1,0 +1,23 @@
+# Nāda Albums View
+component: AlbumsView
+yantra: Saṅgraha
+mudras: [Jāla]
+class: albums-grid
+bind: albumCards
+
+children:
+  - yantra: Bindu
+    class: album-card
+    mudras: [Cala]
+    children:
+      - yantra: Darśana
+        class: album-art
+        bind: albumArt
+      - yantra: Vākya
+        element: h3
+        class: album-title
+        bind: albumTitle
+      - yantra: Vākya
+        class: album-artist
+        bind: albumArtist
+    on: { click: selectAlbum }

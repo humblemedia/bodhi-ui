@@ -1,0 +1,67 @@
+# Nāda Album Detail View
+component: AlbumDetail
+yantra: Darśana
+class: album-detail
+
+children:
+  - yantra: Panthā
+    class: breadcrumb
+    attributes:
+      aria-label: "Breadcrumb"
+    children:
+      - yantra: Kriyā
+        class: breadcrumb-link
+        content: "Artists"
+        on: { click: showArtists }
+      - yantra: Vākya
+        element: span
+        content: " › "
+      - yantra: Kriyā
+        class: breadcrumb-link
+        bind: breadcrumbArtist
+        on: { click: showArtistAlbums }
+      - yantra: Vākya
+        element: span
+        content: " › "
+      - yantra: Vākya
+        element: span
+        bind: breadcrumbAlbum
+
+  - yantra: Darśana
+    class: album-header
+    children:
+      - yantra: Darśana
+        class: album-art-large
+        bind: albumArtLarge
+      - yantra: Darśana
+        class: album-info
+        children:
+          - yantra: Vākya
+            element: h2
+            bind: albumDetailTitle
+          - yantra: Vākya
+            bind: albumDetailArtist
+          - yantra: Vākya
+            bind: albumDetailYear
+
+  - yantra: Sūci
+    class: track-list
+    mudras: [Saṃkṣipta]
+    bind: trackListItems
+    children:
+      - yantra: Bindu
+        class: track-row
+        children:
+          - yantra: Vākya
+            element: span
+            class: track-num
+            bind: trackNum
+          - yantra: Vākya
+            element: span
+            class: track-name
+            bind: trackName
+          - yantra: Vākya
+            element: span
+            class: track-duration
+            bind: trackDuration
+        on: { click: playTrack }

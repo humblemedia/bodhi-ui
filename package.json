@@ -7,7 +7,10 @@
   "workspaces": [
     "packages/eslint-plugin-bodhi",
     "packages/cli",
-    "packages/tokens"
+    "packages/tokens",
+    "packages/compiler",
+    "packages/cetana",
+    "packages/nada"
   ],
   "scripts": {
     "test": "npm test --workspaces",

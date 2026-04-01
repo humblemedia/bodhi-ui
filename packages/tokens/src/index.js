@@ -7,5 +7,7 @@
  */
 
 export { resolveToken, getAllTokens, spatialTokens, communicativeTokens, voiceTokens } from './lookup/poetic-tokens.js';
+export { yantras, resolveYantra, getAllYantras } from './lookup/yantras.js';
+export { mudras, resolveMudra, getAllMudras } from './lookup/mudras.js';
 export { validateRupa } from './schema/rupa-validator.js';
 export { contrastRatio, meetsContrast, adjustForContrast } from './contrast.js';

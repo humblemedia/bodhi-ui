@@ -1,0 +1,17 @@
+{
+  "name": "@bodhi/compiler",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Bodhi semantic compiler — YAML component specs to semantic HTML + CSS + JS",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "node --test test/*.test.js"
+  },
+  "dependencies": {
+    "yaml": "^2.8.3"
+  },
+  "peerDependencies": {
+    "@bodhi/tokens": "0.1.0"
+  }
+}

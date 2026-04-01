@@ -1,0 +1,155 @@
+# Nāda App Shell
+component: NadaShell
+yantra: Garbha
+mudras: [Stūpa]
+attributes:
+  data-bodhi-yantra: garbha
+  role: main
+
+children:
+  - component: Header
+    yantra: Śiras
+    mudras: [Sthira, Pūrṇa]
+    attributes:
+      aria-label: "Nāda music player"
+    children:
+      - yantra: Vākya
+        element: h1
+        class: siras-identity
+        content: "Nāda"
+
+  - component: FolderBar
+    yantra: Darśana
+    mudras: [Pūrṇa, Saṃkṣipta]
+    class: folder-bar
+    attributes:
+      role: toolbar
+      aria-label: "Music folder selection"
+    children:
+      - yantra: Vākya
+        class: folder-path
+        content: ""
+        bind: folderPath
+        attributes:
+          aria-live: "polite"
+      - yantra: Kriyā
+        class: folder-btn
+        content: "Select Music Folder"
+        on: { click: openFolder }
+
+  - component: TabBar
+    yantra: Panthā
+    mudras: [Pūrṇa]
+    class: tab-bar
+    attributes:
+      role: tablist
+      aria-label: "Library views"
+    children:
+      - yantra: Kriyā
+        class: tab-btn
+        content: "Artists"
+        on: { click: showArtists }
+        attributes:
+          role: tab
+          data-bodhi-tab: artists
+          aria-selected: "true"
+          aria-controls: "artists"
+      - yantra: Kriyā
+        class: tab-btn
+        content: "Albums"
+        on: { click: showAlbums }
+        attributes:
+          role: tab
+          data-bodhi-tab: albums
+          aria-selected: "false"
+          aria-controls: "albums"
+      - yantra: Kriyā
+        class: tab-btn
+        content: "Queue"
+        on: { click: showQueue }
+        attributes:
+          role: tab
+          data-bodhi-tab: queue
+          aria-selected: "false"
+          aria-controls: "queue"
+
+  - component: MainContent
+    yantra: Garbha
+    mudras: [Gupta]
+    class: garbha-content
+    views:
+      - id: artists
+        yantra: Saṅgraha
+        mudras: [Jāla]
+        bind: artistCards
+        attributes:
+          role: tabpanel
+          aria-label: "Artists"
+      - id: albums
+        yantra: Saṅgraha
+        mudras: [Jāla]
+        bind: albumCards
+        attributes:
+          role: tabpanel
+          aria-label: "Albums"
+      - id: queue
+        yantra: Sūci
+        bind: queueItems
+        attributes:
+          role: tabpanel
+          aria-label: "Queue"
+
+  - component: NowPlaying
+    yantra: Pāda
+    mudras: [Sthira, Pūrṇa]
+    class: now-playing
+    bind: currentTrack
+    attributes:
+      aria-label: "Now playing"
+      aria-live: "polite"
+    children:
+      - yantra: Vākya
+        class: track-title
+        bind: trackTitle
+        content: ""
+        attributes:
+          aria-label: "Track title"
+      - yantra: Vākya
+        class: track-artist
+        bind: trackArtist
+        content: ""
+        attributes:
+          aria-label: "Track artist"
+      - yantra: Darśana
+        class: playback-controls
+        attributes:
+          role: toolbar
+          aria-label: "Playback controls"
+        children:
+          - yantra: Kriyā
+            class: ctrl-prev
+            content: "⏮"
+            on: { click: prevTrack }
+            attributes:
+              aria-label: "Previous track"
+          - yantra: Kriyā
+            class: ctrl-play
+            content: "▶"
+            on: { click: togglePlay }
+            attributes:
+              aria-label: "Play or pause"
+          - yantra: Kriyā
+            class: ctrl-next
+            content: "⏭"
+            on: { click: nextTrack }
+            attributes:
+              aria-label: "Next track"
+      - yantra: Praveśa
+        class: volume-slider
+        attributes:
+          type: range
+          min: "0"
+          max: "100"
+          value: "80"
+          aria-label: "Volume"
+        on: { input: setVolume }

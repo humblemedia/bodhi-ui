@@ -1,0 +1,21 @@
+{
+  "name": "@bodhi/nada",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Nāda — browser-based local music player. Zero telemetry, zero accounts, zero cloud.",
+  "main": "src/index.html",
+  "scripts": {
+    "build": "node build.js",
+    "test": "node --test test/*.test.js"
+  },
+  "dependencies": {
+    "browser-fs-access": "^0.35.0",
+    "music-metadata": "^10.0.0"
+  },
+  "peerDependencies": {
+    "@bodhi/compiler": "0.1.0",
+    "@bodhi/cetana": "0.1.0",
+    "@bodhi/tokens": "0.1.0"
+  }
+}
