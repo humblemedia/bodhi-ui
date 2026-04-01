@@ -1,0 +1,23 @@
+# Nāda Queue View
+component: QueueView
+yantra: Sūci
+class: queue-list
+bind: queueItems
+
+children:
+  - yantra: Bindu
+    class: queue-item
+    mudras: [Saṃkṣipta]
+    children:
+      - yantra: Vākya
+        element: span
+        class: queue-track-title
+        bind: queueTrackTitle
+      - yantra: Vākya
+        element: span
+        class: queue-track-artist
+        bind: queueTrackArtist
+      - yantra: Kriyā
+        class: queue-remove
+        content: "✕"
+        on: { click: removeFromQueue }

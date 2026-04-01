@@ -132,8 +132,8 @@ export const yantras = {
  * @returns {object} The Yantra definition
  */
 export function resolveYantra(name) {
-  const key = name.toLowerCase().replace(/[āīūṛṝḷḹśṣṇṃḥ]/g, match => {
-    const map = { 'ā': 'a', 'ī': 'i', 'ū': 'u', 'ṛ': 'r', 'ṝ': 'r', 'ḷ': 'l', 'ḹ': 'l', 'ś': 's', 'ṣ': 's', 'ṇ': 'n', 'ṃ': 'm', 'ḥ': 'h' };
+  const key = name.toLowerCase().replace(/[āīūṛṝḷḹśṣṇṅṃḥ]/g, match => {
+    const map = { 'ā': 'a', 'ī': 'i', 'ū': 'u', 'ṛ': 'r', 'ṝ': 'r', 'ḷ': 'l', 'ḹ': 'l', 'ś': 's', 'ṣ': 's', 'ṇ': 'n', 'ṅ': 'n', 'ṃ': 'm', 'ḥ': 'h' };
     return map[match] || match;
   });
   const yantra = yantras[key];

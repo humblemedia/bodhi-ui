@@ -1,0 +1,111 @@
+# Nāda App Shell
+component: NadaShell
+yantra: Garbha
+mudras: [Stūpa]
+attributes:
+  data-bodhi-yantra: garbha
+  role: main
+
+children:
+  - component: Header
+    yantra: Śiras
+    mudras: [Sthira, Pūrṇa]
+    children:
+      - yantra: Vākya
+        element: span
+        class: siras-identity
+        content: "Nāda"
+
+  - component: FolderBar
+    yantra: Darśana
+    mudras: [Pūrṇa, Saṃkṣipta]
+    class: folder-bar
+    children:
+      - yantra: Vākya
+        class: folder-path
+        content: ""
+        bind: folderPath
+      - yantra: Kriyā
+        class: folder-btn
+        content: "Select Music Folder"
+        on: { click: openFolder }
+
+  - component: TabBar
+    yantra: Panthā
+    mudras: [Pūrṇa]
+    class: tab-bar
+    children:
+      - yantra: Kriyā
+        class: tab-btn
+        content: "Artists"
+        on: { click: showArtists }
+        attributes:
+          data-bodhi-tab: artists
+          aria-selected: "true"
+      - yantra: Kriyā
+        class: tab-btn
+        content: "Albums"
+        on: { click: showAlbums }
+        attributes:
+          data-bodhi-tab: albums
+      - yantra: Kriyā
+        class: tab-btn
+        content: "Queue"
+        on: { click: showQueue }
+        attributes:
+          data-bodhi-tab: queue
+
+  - component: MainContent
+    yantra: Garbha
+    mudras: [Gupta]
+    class: garbha-content
+    views:
+      - id: artists
+        yantra: Saṅgraha
+        mudras: [Jāla]
+        bind: artistCards
+      - id: albums
+        yantra: Saṅgraha
+        mudras: [Jāla]
+        bind: albumCards
+      - id: queue
+        yantra: Sūci
+        bind: queueItems
+
+  - component: NowPlaying
+    yantra: Pāda
+    mudras: [Sthira, Pūrṇa]
+    class: now-playing
+    bind: currentTrack
+    children:
+      - yantra: Vākya
+        class: track-title
+        bind: trackTitle
+        content: ""
+      - yantra: Vākya
+        class: track-artist
+        bind: trackArtist
+        content: ""
+      - yantra: Darśana
+        class: playback-controls
+        children:
+          - yantra: Kriyā
+            class: ctrl-prev
+            content: "⏮"
+            on: { click: prevTrack }
+          - yantra: Kriyā
+            class: ctrl-play
+            content: "▶"
+            on: { click: togglePlay }
+          - yantra: Kriyā
+            class: ctrl-next
+            content: "⏭"
+            on: { click: nextTrack }
+      - yantra: Praveśa
+        class: volume-slider
+        attributes:
+          type: range
+          min: "0"
+          max: "100"
+          value: "80"
+        on: { input: setVolume }

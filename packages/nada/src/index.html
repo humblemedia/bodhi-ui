@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" data-bodhi-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nāda — Local Music Player</title>
+  <link rel="stylesheet" href="components.css">
+  <style>
+    :root {
+      --bodhi-akasa-sparsa: 0.125rem;
+      --bodhi-akasa-svasa: 0.5rem;
+      --bodhi-akasa-vicara: 1rem;
+      --bodhi-grid-min: 12rem;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; font-family: system-ui, sans-serif; }
+    [data-bodhi-theme="dark"] { background: #1a1a1a; color: #eee; }
+    [data-bodhi-theme="light"] { background: #fafafa; color: #222; }
+    [data-bodhi-hidden="true"] { display: none; }
+  </style>
+</head>
+<body>
+  <!-- Compiled Bodhi components injected here by build -->
+  <div id="nada-root"></div>
+
+  <script type="module">
+    import { initApp } from './cetana/app.js';
+    const root = document.getElementById('nada-root');
+    initApp(root);
+  </script>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js').catch(() => {});
+    }
+  </script>
+</body>
+</html>

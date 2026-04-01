@@ -90,8 +90,8 @@ export const mudras = {
  */
 export function resolveMudra(name) {
   const key = name.toLowerCase()
-    .replace(/[āīūṛṝḷḹśṣṇṃḥ]/g, match => {
-      const map = { 'ā': 'a', 'ī': 'i', 'ū': 'u', 'ṛ': 'r', 'ṝ': 'r', 'ḷ': 'l', 'ḹ': 'l', 'ś': 's', 'ṣ': 's', 'ṇ': 'n', 'ṃ': 'm', 'ḥ': 'h' };
+    .replace(/[āīūṛṝḷḹśṣṇṅṃḥ]/g, match => {
+      const map = { 'ā': 'a', 'ī': 'i', 'ū': 'u', 'ṛ': 'r', 'ṝ': 'r', 'ḷ': 'l', 'ḹ': 'l', 'ś': 's', 'ṣ': 's', 'ṇ': 'n', 'ṅ': 'n', 'ṃ': 'm', 'ḥ': 'h' };
       return map[match] || match;
     })
     .replace(/[^a-z]/g, '');

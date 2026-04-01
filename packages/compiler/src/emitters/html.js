@@ -71,8 +71,8 @@ function buildAttributes(node, yantra) {
   attrs.push(`data-bodhi-yantra="${yantra.className}"`);
 
   if (node.mudras && node.mudras.length) {
-    const mudraNames = node.mudras.map(m => m.toLowerCase().replace(/[āīūṛṝḷḹśṣṇṃḥ]/g, match => {
-      const map = { 'ā': 'a', 'ī': 'i', 'ū': 'u', 'ṛ': 'r', 'ṝ': 'r', 'ḷ': 'l', 'ḹ': 'l', 'ś': 's', 'ṣ': 's', 'ṇ': 'n', 'ṃ': 'm', 'ḥ': 'h' };
+    const mudraNames = node.mudras.map(m => m.toLowerCase().replace(/[āīūṛṝḷḹśṣṇṅṃḥ]/g, match => {
+      const map = { 'ā': 'a', 'ī': 'i', 'ū': 'u', 'ṛ': 'r', 'ṝ': 'r', 'ḷ': 'l', 'ḹ': 'l', 'ś': 's', 'ṣ': 's', 'ṇ': 'n', 'ṅ': 'n', 'ṃ': 'm', 'ḥ': 'h' };
       return map[match] || match;
     }).replace(/[^a-z]/g, ''));
     attrs.push(`data-bodhi-mudra="${mudraNames.join(' ')}"`);

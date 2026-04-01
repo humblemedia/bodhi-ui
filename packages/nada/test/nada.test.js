@@ -1,0 +1,145 @@
+import { describe, it } from 'node:test';
+import assert from 'node:assert/strict';
+import { readFileSync, existsSync } from 'node:fs';
+import { resolve } from 'node:path';
+import { compile } from '@bodhi/compiler';
+
+const ROOT = new URL('..', import.meta.url).pathname.replace(/^\/([A-Z]:)/, '$1');
+const SPECS_DIR = resolve(ROOT, 'src/specs');
+const DIST_DIR = resolve(ROOT, 'dist');
+
+// ── Spec Compilation ──────────────────────────────────────────
+
+describe('Nāda YAML Specs', () => {
+  const specs = [
+    'shell.bodhi.yaml',
+    'artists.bodhi.yaml',
+    'albums.bodhi.yaml',
+    'album-detail.bodhi.yaml',
+    'queue.bodhi.yaml',
+    'settings.bodhi.yaml',
+  ];
+
+  for (const file of specs) {
+    it(`${file} compiles without errors`, () => {
+      const yaml = readFileSync(resolve(SPECS_DIR, file), 'utf8');
+      const result = compile(yaml);
+      assert.deepEqual(result.errors, [], `Errors: ${result.errors.join(', ')}`);
+      assert.ok(result.html.length > 0, 'HTML output is empty');
+      assert.ok(result.css.length > 0, 'CSS output is empty');
+    });
+  }
+});
+
+// ── Shell Spec Structure ──────────────────────────────────────
+
+describe('Nāda Shell Structure', () => {
+  const yaml = readFileSync(resolve(SPECS_DIR, 'shell.bodhi.yaml'), 'utf8');
+  const result = compile(yaml);
+
+  it('shell uses Garbha (main) as root yantra', () => {
+    assert.ok(result.html.startsWith('<main'));
+  });
+
+  it('shell includes header (Siras)', () => {
+    assert.ok(result.html.includes('<header'));
+    assert.ok(result.html.includes('data-bodhi-yantra="siras"'));
+  });
+
+  it('shell includes footer (Pada) for now-playing', () => {
+    assert.ok(result.html.includes('<footer'));
+    assert.ok(result.html.includes('data-bodhi-yantra="pada"'));
+  });
+
+  it('shell includes navigation (Pantha) for tab bar', () => {
+    assert.ok(result.html.includes('<nav'));
+  });
+
+  it('shell has playback control buttons', () => {
+    assert.ok(result.html.includes('data-bodhi-on-click="togglePlay"'));
+    assert.ok(result.html.includes('data-bodhi-on-click="prevTrack"'));
+    assert.ok(result.html.includes('data-bodhi-on-click="nextTrack"'));
+  });
+
+  it('shell has folder open button', () => {
+    assert.ok(result.html.includes('data-bodhi-on-click="openFolder"'));
+  });
+
+  it('shell has volume slider (Pravesa input)', () => {
+    assert.ok(result.html.includes('data-bodhi-on-input="setVolume"'));
+  });
+
+  it('enforces no-scroll on Garbha', () => {
+    assert.ok(result.css.includes('overflow: hidden'));
+  });
+});
+
+// ── Build Output ──────────────────────────────────────────────
+
+describe('Nāda Build Output', () => {
+  it('dist/components.html exists', () => {
+    assert.ok(existsSync(resolve(DIST_DIR, 'components.html')));
+  });
+
+  it('dist/components.css exists', () => {
+    assert.ok(existsSync(resolve(DIST_DIR, 'components.css')));
+  });
+
+  it('dist/index.html exists', () => {
+    assert.ok(existsSync(resolve(DIST_DIR, 'index.html')));
+  });
+
+  it('dist/sw.js (service worker) exists', () => {
+    assert.ok(existsSync(resolve(DIST_DIR, 'sw.js')));
+  });
+});
+
+// ── Brand Tokens ──────────────────────────────────────────────
+
+describe('Nāda Brand Tokens', () => {
+  const rupa = JSON.parse(readFileSync(resolve(ROOT, 'bodhi.rupa.json'), 'utf8'));
+
+  it('has light and dark color themes', () => {
+    assert.ok(rupa.tokens.color.light);
+    assert.ok(rupa.tokens.color.dark);
+  });
+
+  it('has spatial tokens', () => {
+    assert.ok(rupa.tokens.spatial.sparsa);
+    assert.ok(rupa.tokens.spatial.vicara);
+  });
+
+  it('has voice tokens', () => {
+    assert.ok(rupa.tokens.voice.family);
+  });
+
+  it('has now-playing-specific colors', () => {
+    assert.ok(rupa.tokens.color.dark['now-playing-bg']);
+    assert.ok(rupa.tokens.color.light['now-playing-bg']);
+  });
+});
+
+// ── M1-M9 Compliance (structural checks) ─────────────────────
+
+describe('Bodhi M1-M9 Compliance', () => {
+  const shellYaml = readFileSync(resolve(SPECS_DIR, 'shell.bodhi.yaml'), 'utf8');
+  const result = compile(shellYaml);
+
+  it('M3: nothing auto-plays (no autoplay attributes)', () => {
+    assert.ok(!result.html.includes('autoplay'));
+  });
+
+  it('M4: no data collection (no tracking attributes)', () => {
+    assert.ok(!result.html.includes('analytics'));
+    assert.ok(!result.html.includes('telemetry'));
+    assert.ok(!result.html.includes('tracking'));
+  });
+
+  it('M6: simple controls only', () => {
+    // Verify the core controls exist: play, prev, next, volume
+    const controls = ['togglePlay', 'prevTrack', 'nextTrack', 'setVolume'];
+    for (const ctrl of controls) {
+      assert.ok(result.html.includes(ctrl), `Missing control: ${ctrl}`);
+    }
+  });
+});

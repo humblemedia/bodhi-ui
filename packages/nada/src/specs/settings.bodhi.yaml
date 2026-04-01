@@ -1,0 +1,40 @@
+# Nāda Settings View
+component: SettingsView
+yantra: Darśana
+class: settings
+
+children:
+  - yantra: Vākya
+    element: h2
+    content: "Settings"
+
+  - yantra: Darśana
+    class: setting-group
+    children:
+      - yantra: Vākya
+        element: h3
+        content: "Appearance"
+      - yantra: Darśana
+        class: setting-row
+        children:
+          - yantra: Vākya
+            content: "Theme"
+          - yantra: Kriyā
+            class: theme-toggle
+            content: "Toggle Dark/Light"
+            on: { click: toggleTheme }
+
+  - yantra: Darśana
+    class: setting-group
+    children:
+      - yantra: Vākya
+        element: h3
+        content: "Library"
+      - yantra: Darśana
+        class: setting-row
+        children:
+          - yantra: Vākya
+            bind: libraryStats
+          - yantra: Kriyā
+            content: "Clear Library Cache"
+            on: { click: clearCache }

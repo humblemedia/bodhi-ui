@@ -1,0 +1,45 @@
+{
+  "name": "Nāda",
+  "version": "1.0.0",
+  "description": "Nāda brand tokens — extends Bodhi defaults for a music player",
+  "tokens": {
+    "spatial": {
+      "sparsa": "0.125rem",
+      "svasa": "0.5rem",
+      "vicara": "1rem",
+      "akasa": "2rem"
+    },
+    "color": {
+      "light": {
+        "surface": "#fafafa",
+        "surface-alt": "#f0f0f0",
+        "text": "#222222",
+        "text-muted": "#666666",
+        "accent": "#4a6fa5",
+        "accent-text": "#ffffff",
+        "border": "#e0e0e0",
+        "now-playing-bg": "#2a2a2a",
+        "now-playing-text": "#ffffff"
+      },
+      "dark": {
+        "surface": "#1a1a1a",
+        "surface-alt": "#2a2a2a",
+        "text": "#eeeeee",
+        "text-muted": "#999999",
+        "accent": "#6b9fd4",
+        "accent-text": "#111111",
+        "border": "#333333",
+        "now-playing-bg": "#111111",
+        "now-playing-text": "#eeeeee"
+      }
+    },
+    "voice": {
+      "family": "system-ui, -apple-system, sans-serif",
+      "mono": "'SF Mono', 'Consolas', monospace",
+      "size-sm": "0.875rem",
+      "size-base": "1rem",
+      "size-lg": "1.25rem",
+      "size-xl": "1.5rem"
+    }
+  }
+}
