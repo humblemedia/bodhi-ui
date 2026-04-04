@@ -21,9 +21,9 @@ mkdirSync(DIST_DIR, { recursive: true });
 console.log('Nāda Build');
 console.log('==========\n');
 
-// Compile all specs
+// ── Compile all specs ────────────────────────────────────────
 const specFiles = readdirSync(SPECS_DIR).filter(f => f.endsWith('.bodhi.yaml'));
-const allHtml = [];
+const compiled = {};  // file → { html, css, js }
 const allCss = [];
 const allJs = [];
 
@@ -37,15 +37,100 @@ for (const file of specFiles) {
     process.exit(1);
   }
 
-  allHtml.push(`<!-- ${file} -->\n${result.html}`);
+  compiled[file] = result;
   allCss.push(`/* ${file} */\n${result.css}`);
   if (result.js) allJs.push(`/* ${file} */\n${result.js}`);
 
   console.log(`  Compiled: ${file}`);
 }
 
+// ── Assemble shell with view specs injected into tab panels ──
+const VIEW_PANEL_MAP = {
+  'artists.bodhi.yaml': 'artists',
+  'albums.bodhi.yaml': 'albums',
+  'queue.bodhi.yaml': 'queue',
+  'settings.bodhi.yaml': 'settings',
+};
+
+let shellHtml = compiled['shell.bodhi.yaml'].html;
+
+// Inject each view spec's HTML into the matching tab panel.
+// Strategy: find the panel's opening tag (with its id), find its closing tag,
+// and replace everything between them with the view HTML.
+for (const [specFile, panelId] of Object.entries(VIEW_PANEL_MAP)) {
+  if (!compiled[specFile]) continue;
+  const viewHtml = compiled[specFile].html;
+
+  // Find `id="<panelId>"` in the shell, then locate the element boundaries.
+  // The panels are: <div ...id="artists"...>...</div> or <ul ...id="queue"...>...</ul>
+  // or <article ...id="settings"...>...</article>
+  const idMarker = `id="${panelId}"`;
+  const idPos = shellHtml.indexOf(idMarker);
+  if (idPos === -1) continue;
+
+  // Walk backward to find the opening `<`
+  let openStart = idPos;
+  while (openStart > 0 && shellHtml[openStart] !== '<') openStart--;
+
+  // Get the tag name
+  const tagMatch = shellHtml.substring(openStart).match(/^<(\w+)/);
+  if (!tagMatch) continue;
+  const tagName = tagMatch[1];
+
+  // Find the end of the opening tag
+  const openEnd = shellHtml.indexOf('>', idPos) + 1;
+
+  // Find the matching closing tag (simple: first </tagName> after openEnd
+  // accounting for the fact panels don't nest the same tag deeply)
+  // Use a depth counter for accuracy
+  let depth = 1;
+  let pos = openEnd;
+  const openPattern = new RegExp(`<${tagName}[\\s>]`);
+  while (depth > 0 && pos < shellHtml.length) {
+    const nextOpen = shellHtml.indexOf(`<${tagName}`, pos);
+    const nextClose = shellHtml.indexOf(`</${tagName}>`, pos);
+    if (nextClose === -1) break;
+    if (nextOpen !== -1 && nextOpen < nextClose) {
+      // Check it's actually an opening tag (not a substring)
+      const charAfterTag = shellHtml[nextOpen + tagName.length + 1];
+      if (charAfterTag === ' ' || charAfterTag === '>' || charAfterTag === '/') {
+        depth++;
+      }
+      pos = nextOpen + tagName.length + 1;
+    } else {
+      depth--;
+      if (depth === 0) {
+        // Replace content between openEnd and nextClose
+        shellHtml = shellHtml.substring(0, openEnd) +
+          `\n      ${viewHtml}\n    ` +
+          shellHtml.substring(nextClose);
+        break;
+      }
+      pos = nextClose + tagName.length + 3;
+    }
+  }
+}
+
+// Inject album-detail as an additional view panel inside garbha-content
+if (compiled['album-detail.bodhi.yaml']) {
+  const detailHtml = compiled['album-detail.bodhi.yaml'].html;
+  // Find the closing </main> of garbha-content and insert before it
+  const garbhaContentIdx = shellHtml.indexOf('garbha-content');
+  if (garbhaContentIdx !== -1) {
+    // Find the </main> that closes garbha-content
+    const afterGarbha = shellHtml.indexOf('</main>', garbhaContentIdx);
+    if (afterGarbha !== -1) {
+      const albumDetailPanel = `    <article class="darsana album-detail" data-bodhi-view="album-detail" id="album-detail" data-bodhi-hidden="true">\n        ${detailHtml}\n      </article>\n  `;
+      shellHtml = shellHtml.substring(0, afterGarbha) + albumDetailPanel + shellHtml.substring(afterGarbha);
+    }
+  }
+}
+
+// The assembled HTML is just the shell (with views injected)
+const assembledHtml = shellHtml;
+
 // Write combined outputs
-writeFileSync(join(DIST_DIR, 'components.html'), allHtml.join('\n\n'), 'utf8');
+writeFileSync(join(DIST_DIR, 'components.html'), assembledHtml, 'utf8');
 writeFileSync(join(DIST_DIR, 'components.css'), allCss.join('\n'), 'utf8');
 if (allJs.length) {
   // Deduplicate import statements across combined JS
@@ -117,7 +202,7 @@ try {
 console.log(`\nBuild complete → ${DIST_DIR}/`);
 
 function generateIndexHtml() {
-  const compiledMarkup = allHtml.join('\n    ');
+  const compiledMarkup = assembledHtml;
   return `<!DOCTYPE html>
 <html lang="en" data-bodhi-theme="light">
 <head>

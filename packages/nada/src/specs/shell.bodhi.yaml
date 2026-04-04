@@ -90,7 +90,8 @@ children:
     bind: breadcrumb
 
   - component: MainContent
-    yantra: Garbha
+    yantra: Darśana
+    element: section
     mudras: [Gupta]
     class: garbha-content
     views:
