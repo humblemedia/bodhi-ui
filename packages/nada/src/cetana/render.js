@@ -100,6 +100,21 @@ export function renderApp(root, compiledHtml) {
   // 8. Wire keyboard navigation
   wireKeyboard(root);
 
+  // 9. Move album-detail into garbha-content if needed
+  const gc = root.querySelector('.garbha-content');
+  const albumDetail = root.querySelector('article.album-detail, .album-detail');
+  if (albumDetail && gc && albumDetail.parentElement !== gc) {
+    albumDetail.setAttribute('data-bodhi-view', 'album-detail');
+    albumDetail.id = 'album-detail';
+    gc.appendChild(albumDetail);
+  }
+
+  // 10. Wire track list rendering
+  wireTrackList(root, unsubs);
+
+  // 11. Wire now-playing display
+  wireNowPlaying(root, unsubs);
+
   return () => unsubs.forEach(fn => fn());
 }
 
@@ -107,6 +122,7 @@ export function renderApp(root, compiledHtml) {
 const LIST_BINDS = new Set([
   'artistCards', 'albumCards', 'queueItems', 'filteredTracks',
   'trackListItems', 'breadcrumb', 'breadcrumbLabel',
+  'currentTrack',
 ]);
 
 function wireTextBindings(root, unsubs) {
@@ -365,4 +381,84 @@ function wireKeyboard(root) {
 function findTrack(id) {
   const lib = library.get();
   return lib.tracks.find(t => t.id === id) || null;
+}
+
+function wireTrackList(root, unsubs) {
+  const trackList = root.querySelector('.track-list');
+  if (!trackList) return;
+
+  // Clear compiled template content
+  trackList.innerHTML = '';
+  trackList.style.cssText = 'list-style:none; padding:0; margin:0;';
+
+  unsubs.push(filteredTracks.subscribe(tracks => {
+    trackList.innerHTML = '';
+    if (tracks.length === 0) return;
+
+    tracks.forEach((track, i) => {
+      const row = document.createElement('li');
+      row.className = 'bindu track-row';
+      row.setAttribute('tabindex', '0');
+      row.style.cssText = 'display:flex; align-items:center; gap:1rem; padding:0.75rem 1rem; border-bottom:1px solid var(--nada-border, #ddd); cursor:pointer;';
+
+      const num = document.createElement('span');
+      num.className = 'track-num';
+      num.style.cssText = 'min-width:2rem; color:var(--nada-text-muted, #888);';
+      num.textContent = String(i + 1);
+
+      const name = document.createElement('span');
+      name.className = 'track-name';
+      name.style.cssText = 'flex:1; font-weight:500;';
+      name.textContent = track.title;
+
+      const dur = document.createElement('span');
+      dur.className = 'track-duration';
+      dur.style.cssText = 'color:var(--nada-text-muted, #888);';
+      dur.textContent = formatDuration(track.duration);
+
+      const playBtn = document.createElement('button');
+      playBtn.type = 'button';
+      playBtn.className = 'kriya track-play';
+      playBtn.textContent = '\u25B6 Play';
+      playBtn.style.cssText = 'padding:4px 12px; cursor:pointer; border:1px solid var(--nada-border,#ccc); border-radius:4px; background:var(--nada-accent, #4a6fa5); color:white; font-weight:500;';
+      playBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        playTrack(track);
+      });
+
+      const queueBtn = document.createElement('button');
+      queueBtn.type = 'button';
+      queueBtn.className = 'kriya track-queue';
+      queueBtn.textContent = '+ Queue';
+      queueBtn.style.cssText = 'padding:4px 12px; cursor:pointer; border:1px solid var(--nada-border,#ccc); border-radius:4px; background:var(--nada-surface,#fff); color:var(--nada-text,#222);';
+      queueBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        addToQueue(track);
+      });
+
+      row.append(num, name, dur, playBtn, queueBtn);
+      row.addEventListener('click', () => playTrack(track));
+      trackList.appendChild(row);
+    });
+  }));
+}
+
+function formatDuration(sec) {
+  if (!sec) return '';
+  return Math.floor(sec / 60) + ':' + String(Math.floor(sec % 60)).padStart(2, '0');
+}
+
+function wireNowPlaying(root, unsubs) {
+  unsubs.push(trackTitle.subscribe(title => {
+    const el = root.querySelector('.track-title');
+    if (el) el.textContent = title;
+  }));
+  unsubs.push(trackArtist.subscribe(artist => {
+    const el = root.querySelector('.track-artist');
+    if (el) el.textContent = artist;
+  }));
+  unsubs.push(isPlaying.subscribe(playing => {
+    const btn = root.querySelector('.ctrl-play');
+    if (btn) btn.textContent = playing ? '\u23F8' : '\u25B6';
+  }));
 }
