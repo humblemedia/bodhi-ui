@@ -85,6 +85,12 @@ The Sanskrit naming system isn't decoration — it's productive friction. When a
 7. Semantic, design-agnostic components.
 8. Design on principles, not metrics.
 
+## Applications
+
+### [Nada](packages/nada/) — Local Music Player
+
+The first application built with Bodhi. Nada plays audio files from your filesystem with no accounts, no cloud, and no telemetry. Built with the Bodhi compiler (YAML specs to semantic HTML) and Cetana (reactive signals). See [`packages/nada/`](packages/nada/) for details.
+
 ## License
 
 MIT
