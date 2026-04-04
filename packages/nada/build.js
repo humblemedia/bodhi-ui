@@ -63,21 +63,8 @@ if (allJs.length) {
   writeFileSync(join(DIST_DIR, 'components.js'), deduped, 'utf8');
 }
 
-// Build index.html with inlined compiled HTML
-const indexSrc = resolve(ROOT, 'src/index.html');
-try {
-  let indexContent = readFileSync(indexSrc, 'utf8');
-  // Inject compiled HTML into #nada-root
-  const compiledMarkup = allHtml.join('\n  ');
-  indexContent = indexContent.replace(
-    /<!-- Compiled Bodhi components injected here by build -->\s*<div id="nada-root"><\/div>/,
-    `<div id="nada-root">\n  ${compiledMarkup}\n  </div>`
-  );
-  writeFileSync(join(DIST_DIR, 'index.html'), indexContent, 'utf8');
-} catch {
-  // Generate a default index.html
-  writeFileSync(join(DIST_DIR, 'index.html'), generateIndexHtml(), 'utf8');
-}
+// Build index.html programmatically — no regex, every piece guaranteed present
+writeFileSync(join(DIST_DIR, 'index.html'), generateIndexHtml(), 'utf8');
 
 // Copy static files (service worker, theme CSS)
 try {
@@ -130,6 +117,7 @@ try {
 console.log(`\nBuild complete → ${DIST_DIR}/`);
 
 function generateIndexHtml() {
+  const compiledMarkup = allHtml.join('\n    ');
   return `<!DOCTYPE html>
 <html lang="en" data-bodhi-theme="light">
 <head>
@@ -137,6 +125,16 @@ function generateIndexHtml() {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Nāda — Local Music Player</title>
   <link rel="stylesheet" href="components.css">
+  <link rel="stylesheet" href="theme.css">
+  <script type="importmap">
+  {
+    "imports": {
+      "@bodhi/cetana": "./lib/cetana/index.js",
+      "browser-fs-access": "https://cdn.jsdelivr.net/npm/browser-fs-access@0.35.0/dist/index.modern.js",
+      "music-metadata": "https://cdn.jsdelivr.net/npm/music-metadata-browser@2.5.10/dist/index.mjs"
+    }
+  }
+  </script>
   <style>
     :root {
       --bodhi-akasa-sparsa: 0.125rem;
@@ -152,8 +150,16 @@ function generateIndexHtml() {
   </style>
 </head>
 <body>
-  ${allHtml.join('\n  ')}
-  <script type="module" src="components.js"></script>
+  <div id="nada-root">
+    ${compiledMarkup}
+  </div>
+
+  <script type="module">
+    import { initApp } from './cetana/app.js';
+    const root = document.getElementById('nada-root');
+    initApp(root);
+  </script>
+
   <script>
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/sw.js').catch(() => {});
