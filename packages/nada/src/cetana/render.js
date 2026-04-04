@@ -97,6 +97,9 @@ export function renderApp(root, compiledHtml) {
   // 7. Wire progress indicator
   wireProgress(root, unsubs);
 
+  // 8. Wire keyboard navigation
+  wireKeyboard(root);
+
   return () => unsubs.forEach(fn => fn());
 }
 
@@ -294,6 +297,29 @@ function wireProgress(root, unsubs) {
       progressEl.style.display = 'none';
     }
   }));
+}
+
+function wireKeyboard(root) {
+  root.addEventListener('keydown', (e) => {
+    // Escape: navigate breadcrumb back
+    if (e.key === 'Escape') {
+      const crumbs = breadcrumb.get();
+      if (crumbs.length > 0) {
+        breadcrumbBack(crumbs.length - 2 >= 0 ? crumbs.length - 2 : 0);
+      }
+    }
+  });
+
+  // Move focus to first interactive element when view changes
+  currentView.subscribe(() => {
+    requestAnimationFrame(() => {
+      const activePanel = root.querySelector('[data-bodhi-view]:not([data-bodhi-hidden="true"])');
+      if (activePanel) {
+        const firstFocusable = activePanel.querySelector('button, [href], input, [tabindex]:not([tabindex="-1"])');
+        if (firstFocusable) firstFocusable.focus();
+      }
+    });
+  });
 }
 
 function findTrack(id) {

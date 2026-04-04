@@ -92,6 +92,35 @@ describe('Screen Reader / ARIA', () => {
   });
 });
 
+// ── Keyboard Navigation (structural) ─────────────────────────
+
+describe('Keyboard Navigation', () => {
+  it('render.js handles Escape key for breadcrumb navigation', () => {
+    const src = readFileSync(resolve(ROOT, 'src/cetana/render.js'), 'utf8');
+    assert.ok(src.includes("e.key === 'Escape'"), 'Must handle Escape key');
+  });
+
+  it('render.js moves focus on view change', () => {
+    const src = readFileSync(resolve(ROOT, 'src/cetana/render.js'), 'utf8');
+    assert.ok(src.includes('.focus()'), 'Must move focus to first interactive element');
+  });
+
+  it('all buttons use native <button> element (Enter/Space operable)', () => {
+    // Check all specs compile to <button>, never <div> with click handlers
+    const specs = ['shell', 'artists', 'albums', 'album-detail', 'queue', 'settings'];
+    for (const name of specs) {
+      const yaml = readFileSync(resolve(SPECS_DIR, `${name}.bodhi.yaml`), 'utf8');
+      const result = compile(yaml);
+      const divClicks = result.html.match(/<div[^>]*data-bodhi-on-click/g);
+      assert.equal(divClicks, null, `${name}: found div with click handler`);
+    }
+  });
+
+  it('volume slider uses native input[type="range"] (arrow keys work)', () => {
+    assert.ok(shell.html.includes('type="range"'));
+  });
+});
+
 // ── Zero Telemetry ────────────────────────────────────────────
 
 describe('Zero Telemetry', () => {
