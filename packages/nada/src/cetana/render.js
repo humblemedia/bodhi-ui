@@ -8,8 +8,9 @@ import { list } from '@bodhi/cetana';
 import {
   folderPath, currentView, currentTrack, isPlaying,
   queue, volume, theme, library,
-  trackTitle, trackArtist,
-  openFolder, showArtists, showAlbums, showQueue, toggleTheme,
+  trackTitle, trackArtist, libraryStats,
+  openFolder, showArtists, showAlbums, showQueue, showSettings,
+  toggleTheme, clearCache,
 } from './app.js';
 import {
   page, pageSize, totalPages,
@@ -39,7 +40,7 @@ const SIGNAL_MAP = {
   breadcrumb,
   indexProgress,
   currentTrack,
-  libraryStats: null, // wired in TODO 5
+  libraryStats,
 };
 
 // ── Action-to-function mapping ───────────────────────────────
@@ -56,6 +57,8 @@ const ACTION_MAP = {
   prevTrack,
   setVolume,
   toggleTheme,
+  showSettings,
+  clearCache,
   selectArtist,
   selectAlbum,
   showArtistAlbums,

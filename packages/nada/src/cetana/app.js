@@ -41,6 +41,18 @@ export const trackArtist = computed(
   [currentTrack]
 );
 
+export const libraryStats = computed(
+  () => {
+    const lib = library.get();
+    const a = lib.artists.length;
+    const al = lib.albums.length;
+    const t = lib.tracks.length;
+    if (t === 0) return 'No music indexed';
+    return `${a} artist${a !== 1 ? 's' : ''}, ${al} album${al !== 1 ? 's' : ''}, ${t} track${t !== 1 ? 's' : ''}`;
+  },
+  [library]
+);
+
 // ── Actions ───────────────────────────────────────────────────
 
 export async function openFolder() {
@@ -66,6 +78,17 @@ export async function openFolder() {
 export function showArtists() { currentView.set('artists'); }
 export function showAlbums() { currentView.set('albums'); }
 export function showQueue() { currentView.set('queue'); }
+export function showSettings() { currentView.set('settings'); }
+
+export async function clearCache() {
+  try {
+    if (typeof navigator === 'undefined' || !navigator.storage?.getDirectory) return;
+    const root = await navigator.storage.getDirectory();
+    await root.removeEntry('nada-library.json');
+  } catch {
+    // File may not exist — that's fine
+  }
+}
 
 export function toggleTheme() {
   theme.set(theme.get() === 'dark' ? 'light' : 'dark');

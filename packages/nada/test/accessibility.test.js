@@ -72,6 +72,7 @@ describe('Screen Reader / ARIA', () => {
     assert.ok(shell.html.includes('aria-controls="artists"'));
     assert.ok(shell.html.includes('aria-controls="albums"'));
     assert.ok(shell.html.includes('aria-controls="queue"'));
+    assert.ok(shell.html.includes('aria-controls="settings"'));
   });
 
   it('view panels have role="tabpanel"', () => {
