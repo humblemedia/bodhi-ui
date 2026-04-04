@@ -65,6 +65,18 @@ try {
   console.log('  No service worker found, skipping.');
 }
 
+// Copy web worker
+const WORKERS_DIR = resolve(ROOT, 'src/workers');
+try {
+  mkdirSync(join(DIST_DIR, 'workers'), { recursive: true });
+  const workers = readdirSync(WORKERS_DIR).filter(f => f.endsWith('.js'));
+  for (const w of workers) {
+    copyFileSync(join(WORKERS_DIR, w), join(DIST_DIR, 'workers', w));
+  }
+} catch {
+  // No workers — that's fine
+}
+
 console.log(`\nBuild complete → ${DIST_DIR}/`);
 
 function generateIndexHtml() {

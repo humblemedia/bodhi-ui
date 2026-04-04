@@ -1,0 +1,1248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nāda — Mockup v0.1</title>
+<style>
+  /* ═══════════════════════════════════════════
+   * Bodhi Token System (subset)
+   * ═══════════════════════════════════════════ */
+  :root {
+    --varna-surface: #ffffff;
+    --varna-surface-alt: #f8fafc;
+    --varna-bg: #ffffff;
+    --varna-fg: #0f172a;
+    --varna-muted: #64748b;
+    --varna-primary: #2563eb;
+    --varna-accent: #8b5cf6;
+    --varna-border: #e2e8f0;
+    --varna-hover: #f1f5f9;
+    --varna-active: #e8f0fe;
+    --varna-success: #16a34a;
+    --varna-warning-bg: #FFFBEB;
+    --varna-warning-border: #FCD34D;
+    --varna-warning-fg: #92400E;
+
+    --lipi-body: system-ui, -apple-system, sans-serif;
+    --lipi-mono: ui-monospace, 'Cascadia Code', monospace;
+    --lipi-katha: 1rem;
+    --lipi-japa: 0.8125rem;
+    --lipi-ghosana: 1.25rem;
+
+    --akasa-sparsa: 0.125rem;
+    --akasa-svasa: 0.5rem;
+    --akasa-vicara: 1rem;
+    --akasa-vistara: 1.5rem;
+
+    --sima-radius: 0.5rem;
+    --sima-radius-sm: 0.25rem;
+    --calana-fast: 100ms;
+    --calana-normal: 200ms;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --varna-surface: #0f172a;
+      --varna-surface-alt: #1e293b;
+      --varna-bg: #020617;
+      --varna-fg: #f8fafc;
+      --varna-muted: #94a3b8;
+      --varna-primary: #60a5fa;
+      --varna-accent: #a78bfa;
+      --varna-border: #334155;
+      --varna-hover: #1e293b;
+      --varna-active: #1e3a5f;
+      --varna-success: #4ade80;
+      --varna-warning-bg: #422006;
+      --varna-warning-border: #92400E;
+      --varna-warning-fg: #FCD34D;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :root { --calana-fast: 0ms; --calana-normal: 0ms; }
+  }
+
+  /* ═══════════════════════════════════════════
+   * Reset & Base
+   * ═══════════════════════════════════════════ */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    height: 100%;
+    overflow: hidden; /* THE NO-SCROLL CONSTRAINT */
+    font-family: var(--lipi-body);
+    font-size: var(--lipi-katha);
+    color: var(--varna-fg);
+    background: var(--varna-bg);
+  }
+
+  button { font: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+  button:focus-visible { outline: 2px solid var(--varna-primary); outline-offset: 2px; border-radius: var(--sima-radius-sm); }
+
+  /* ═══════════════════════════════════════════
+   * App Shell — fixed grid, no scroll anywhere
+   * ═══════════════════════════════════════════ */
+  .app {
+    display: grid;
+    grid-template-rows: auto auto 1fr auto auto;
+    height: 100vh;
+    height: 100dvh;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  /* ═══════════════════════════════════════════
+   * Header (Śiras)
+   * ═══════════════════════════════════════════ */
+  .siras {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--akasa-svasa) var(--akasa-vicara);
+    border-bottom: 1px solid var(--varna-border);
+    background: var(--varna-surface);
+  }
+
+  .siras-identity {
+    font-size: var(--lipi-ghosana);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    flex-shrink: 0;
+  }
+
+  .siras-identity span {
+    font-weight: 400;
+    color: var(--varna-muted);
+    font-size: var(--lipi-japa);
+    margin-left: var(--akasa-svasa);
+  }
+
+  /* ═══════════════════════════════════════════
+   * Folder Bar — shows current path + select button
+   * ═══════════════════════════════════════════ */
+  .folder-bar {
+    display: flex;
+    align-items: center;
+    gap: var(--akasa-svasa);
+    padding: var(--akasa-svasa) var(--akasa-vicara);
+    background: var(--varna-surface-alt);
+    border-bottom: 1px solid var(--varna-border);
+    font-size: var(--lipi-japa);
+  }
+
+  .folder-bar .folder-icon {
+    font-size: 1.125rem;
+    flex-shrink: 0;
+  }
+
+  .folder-bar .folder-path {
+    flex: 1;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-family: var(--lipi-mono);
+    font-size: 0.75rem;
+    color: var(--varna-muted);
+  }
+
+  .folder-bar .folder-path.empty {
+    font-family: var(--lipi-body);
+    font-style: italic;
+    font-size: var(--lipi-japa);
+  }
+
+  .folder-bar .folder-btn {
+    flex-shrink: 0;
+    padding: var(--akasa-sparsa) var(--akasa-svasa);
+    background: var(--varna-primary);
+    color: #fff;
+    border-radius: var(--sima-radius-sm);
+    font-size: 0.75rem;
+    font-weight: 600;
+    transition: opacity var(--calana-fast);
+  }
+
+  .folder-bar .folder-btn:hover { opacity: 0.9; }
+
+  .folder-bar .folder-meta {
+    flex-shrink: 0;
+    font-size: 0.75rem;
+    color: var(--varna-muted);
+    padding-left: var(--akasa-svasa);
+    border-left: 1px solid var(--varna-border);
+  }
+
+  /* ═══════════════════════════════════════════
+   * Main Content Area — the paginated view
+   * ═══════════════════════════════════════════ */
+  .garbha {
+    overflow: hidden;
+    position: relative;
+    background: var(--varna-bg);
+  }
+
+  .view {
+    display: none;
+    height: 100%;
+    padding: var(--akasa-vicara);
+    animation: viewEnter var(--calana-normal) ease-out;
+  }
+
+  .view.active { display: flex; flex-direction: column; }
+
+  @keyframes viewEnter {
+    from { opacity: 0; transform: translateX(8px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  /* ── Notice (no folder selected) ─────────── */
+  .notice {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--akasa-vicara);
+    padding: var(--akasa-vicara) var(--akasa-vistara);
+    margin: var(--akasa-vistara) auto;
+    max-width: 520px;
+    background: var(--varna-warning-bg);
+    border: 1px solid var(--varna-warning-border);
+    border-radius: var(--sima-radius);
+    color: var(--varna-warning-fg);
+    line-height: 1.6;
+  }
+
+  .notice-icon { font-size: 1.5rem; flex-shrink: 0; margin-top: 2px; }
+  .notice h3 { font-size: var(--lipi-katha); font-weight: 600; margin-bottom: var(--akasa-sparsa); }
+  .notice p { font-size: var(--lipi-japa); }
+  .notice .notice-steps { font-size: var(--lipi-japa); margin-top: var(--akasa-svasa); }
+  .notice .notice-steps span { display: block; margin-bottom: 2px; }
+
+  /* ── Breadcrumb ──────────────────────────── */
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: var(--akasa-svasa);
+    margin-bottom: var(--akasa-vicara);
+    font-size: var(--lipi-japa);
+    color: var(--varna-muted);
+    flex-shrink: 0;
+  }
+
+  .breadcrumb button {
+    color: var(--varna-primary);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    font-size: var(--lipi-japa);
+  }
+
+  .breadcrumb button:hover { color: var(--varna-accent); }
+  .breadcrumb .sep { color: var(--varna-border); }
+
+  /* ── Grid of cards (artists, albums) ─────── */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: var(--akasa-vicara);
+    flex: 1;
+    align-content: start;
+    overflow: hidden;
+  }
+
+  .card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--akasa-svasa);
+    padding: var(--akasa-svasa);
+    border-radius: var(--sima-radius);
+    transition: background var(--calana-fast);
+    cursor: pointer;
+    text-align: left;
+  }
+
+  .card:hover { background: var(--varna-hover); }
+  .card:active { background: var(--varna-active); }
+
+  .card-art {
+    aspect-ratio: 1;
+    border-radius: var(--sima-radius-sm);
+    background: var(--varna-surface-alt);
+    border: 1px solid var(--varna-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    color: var(--varna-muted);
+    overflow: hidden;
+  }
+
+  .card-art.round { border-radius: 50%; }
+
+  .card-name {
+    font-weight: 600;
+    font-size: var(--lipi-japa);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .card-meta {
+    font-size: 0.75rem;
+    color: var(--varna-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* ── Track list (album detail) ───────────── */
+  .track-list { flex: 1; overflow: hidden; }
+
+  .album-header {
+    display: flex;
+    gap: var(--akasa-vicara);
+    margin-bottom: var(--akasa-vicara);
+    flex-shrink: 0;
+  }
+
+  .album-header .card-art {
+    width: 140px;
+    height: 140px;
+    flex-shrink: 0;
+  }
+
+  .album-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--akasa-sparsa);
+    min-width: 0;
+  }
+
+  .album-info h2 {
+    font-size: var(--lipi-ghosana);
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .album-info .artist-link {
+    color: var(--varna-primary);
+    font-size: var(--lipi-japa);
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    background: none;
+    border: none;
+    font: inherit;
+    padding: 0;
+    text-align: left;
+  }
+
+  .album-info .album-meta { font-size: var(--lipi-japa); color: var(--varna-muted); }
+
+  .btn-play-album {
+    margin-top: var(--akasa-svasa);
+    padding: var(--akasa-sparsa) var(--akasa-vicara);
+    background: var(--varna-primary);
+    color: #fff;
+    border-radius: var(--sima-radius-sm);
+    font-size: var(--lipi-japa);
+    font-weight: 600;
+    align-self: flex-start;
+    transition: opacity var(--calana-fast);
+  }
+  .btn-play-album:hover { opacity: 0.9; }
+
+  .track-row {
+    display: grid;
+    grid-template-columns: 2rem 1fr 4rem;
+    align-items: center;
+    padding: var(--akasa-svasa);
+    border-radius: var(--sima-radius-sm);
+    cursor: pointer;
+    transition: background var(--calana-fast);
+    gap: var(--akasa-svasa);
+  }
+
+  .track-row:hover { background: var(--varna-hover); }
+  .track-row.playing { background: var(--varna-active); }
+
+  .track-num {
+    font-size: var(--lipi-japa);
+    color: var(--varna-muted);
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .track-row.playing .track-num { color: var(--varna-primary); font-weight: 700; }
+
+  .track-title {
+    font-size: var(--lipi-japa);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .track-row.playing .track-title { color: var(--varna-primary); font-weight: 600; }
+
+  .track-dur {
+    font-size: 0.75rem;
+    color: var(--varna-muted);
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ── Pagination ──────────────────────────── */
+  .pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--akasa-svasa);
+    padding: var(--akasa-svasa) 0;
+    flex-shrink: 0;
+    margin-top: auto;
+  }
+
+  .pagination button {
+    padding: var(--akasa-sparsa) var(--akasa-svasa);
+    border-radius: var(--sima-radius-sm);
+    font-size: var(--lipi-japa);
+    color: var(--varna-muted);
+    min-width: 2rem;
+    text-align: center;
+  }
+
+  .pagination button:hover { background: var(--varna-hover); color: var(--varna-fg); }
+  .pagination button.current { background: var(--varna-active); color: var(--varna-primary); font-weight: 600; }
+  .pagination button:disabled { opacity: 0.3; cursor: default; }
+  .pagination button:disabled:hover { background: none; color: var(--varna-muted); }
+
+  /* ── Queue View ──────────────────────────── */
+  .queue-list { flex: 1; overflow: hidden; }
+
+  .queue-section-label {
+    font-size: var(--lipi-japa);
+    font-weight: 600;
+    color: var(--varna-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: var(--akasa-svasa);
+  }
+
+  .queue-row {
+    display: grid;
+    grid-template-columns: 2.5rem 1fr auto;
+    align-items: center;
+    padding: var(--akasa-svasa);
+    border-radius: var(--sima-radius-sm);
+    gap: var(--akasa-svasa);
+    cursor: pointer;
+    transition: background var(--calana-fast);
+  }
+
+  .queue-row:hover { background: var(--varna-hover); }
+  .queue-row.playing { background: var(--varna-active); }
+
+  .queue-art {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: var(--sima-radius-sm);
+    background: var(--varna-surface-alt);
+    border: 1px solid var(--varna-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.875rem;
+  }
+
+  .queue-info { min-width: 0; }
+  .queue-title {
+    font-size: var(--lipi-japa);
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .queue-row.playing .queue-title { color: var(--varna-primary); font-weight: 600; }
+  .queue-meta {
+    font-size: 0.75rem;
+    color: var(--varna-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* ── Settings view ───────────────────────── */
+  .settings-group { margin-bottom: var(--akasa-vistara); }
+
+  .settings-group h3 {
+    font-size: var(--lipi-japa);
+    font-weight: 600;
+    color: var(--varna-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: var(--akasa-svasa);
+  }
+
+  .setting-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--akasa-svasa) 0;
+    border-bottom: 1px solid var(--varna-border);
+  }
+
+  .setting-label { font-size: var(--lipi-japa); }
+  .setting-value { font-size: var(--lipi-japa); color: var(--varna-muted); }
+
+  /* ═══════════════════════════════════════════
+   * Navigation Tabs (Panthā)
+   * ═══════════════════════════════════════════ */
+  .pantha {
+    display: flex;
+    border-top: 1px solid var(--varna-border);
+    background: var(--varna-surface);
+  }
+
+  .pantha button {
+    flex: 1;
+    padding: var(--akasa-svasa) 0;
+    font-size: var(--lipi-japa);
+    color: var(--varna-muted);
+    text-align: center;
+    transition: color var(--calana-fast), background var(--calana-fast);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+  }
+
+  .pantha button .tab-icon { font-size: 1.25rem; line-height: 1; }
+  .pantha button:hover { background: var(--varna-hover); color: var(--varna-fg); }
+  .pantha button.active { color: var(--varna-primary); font-weight: 600; }
+
+  .pantha button.active::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 20%;
+    right: 20%;
+    height: 2px;
+    background: var(--varna-primary);
+    border-radius: 0 0 2px 2px;
+  }
+
+  /* ═══════════════════════════════════════════
+   * Now Playing Bar
+   * ═══════════════════════════════════════════ */
+  .now-playing {
+    display: none;
+    border-top: 1px solid var(--varna-border);
+    background: var(--varna-surface);
+    padding: var(--akasa-svasa) var(--akasa-vicara);
+  }
+
+  .now-playing.visible { display: block; }
+
+  .np-content {
+    display: flex;
+    align-items: center;
+    gap: var(--akasa-vicara);
+  }
+
+  .np-art {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--sima-radius-sm);
+    background: var(--varna-surface-alt);
+    border: 1px solid var(--varna-border);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+  }
+
+  .np-info { flex: 1; min-width: 0; }
+  .np-title {
+    font-weight: 600;
+    font-size: var(--lipi-japa);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .np-artist {
+    font-size: 0.75rem;
+    color: var(--varna-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .np-controls {
+    display: flex;
+    align-items: center;
+    gap: var(--akasa-svasa);
+  }
+
+  .np-controls button {
+    width: 2.25rem;
+    height: 2.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 1rem;
+    transition: background var(--calana-fast);
+  }
+
+  .np-controls button:hover { background: var(--varna-hover); }
+  .np-controls .play-btn {
+    width: 2.75rem;
+    height: 2.75rem;
+    background: var(--varna-primary);
+    color: #fff;
+    font-size: 1.25rem;
+  }
+  .np-controls .play-btn:hover { opacity: 0.9; background: var(--varna-primary); }
+
+  .np-progress {
+    display: flex;
+    align-items: center;
+    gap: var(--akasa-svasa);
+    margin-top: var(--akasa-sparsa);
+  }
+
+  .np-time {
+    font-size: 0.6875rem;
+    color: var(--varna-muted);
+    font-variant-numeric: tabular-nums;
+    width: 3rem;
+  }
+
+  .np-time.end { text-align: right; }
+
+  .progress-bar {
+    flex: 1;
+    height: 4px;
+    background: var(--varna-border);
+    border-radius: 2px;
+    overflow: hidden;
+    cursor: pointer;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--varna-primary);
+    border-radius: 2px;
+    width: 35%;
+    transition: width 0.3s linear;
+  }
+
+  .progress-bar:hover { height: 6px; margin-top: -1px; margin-bottom: -1px; }
+
+  /* ═══════════════════════════════════════════
+   * Mockup label
+   * ═══════════════════════════════════════════ */
+  .mockup-banner {
+    background: var(--varna-accent);
+    color: #fff;
+    text-align: center;
+    font-size: 0.6875rem;
+    padding: 2px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+</style>
+</head>
+<body>
+<div class="mockup-banner">Nāda Mockup v0.1 — Interactive Prototype (no real audio)</div>
+
+<div class="app">
+  <!-- ═══ Header ═══ -->
+  <header class="siras" role="banner">
+    <div class="siras-identity">Nāda <span>नाद</span></div>
+  </header>
+
+  <!-- ═══ Folder Bar ═══ -->
+  <div class="folder-bar" role="toolbar" aria-label="Music folder">
+    <span class="folder-icon">📂</span>
+    <span class="folder-path empty" id="folder-path">No folder selected</span>
+    <button class="folder-btn" onclick="openFolder()" id="folder-btn">Select Music Folder</button>
+  </div>
+
+  <!-- ═══ Main Content ═══ -->
+  <main class="garbha" role="main">
+
+    <!-- Empty state notice (no folder selected) -->
+    <div class="view active" id="view-empty">
+      <div class="notice" role="status">
+        <span class="notice-icon">🎵</span>
+        <div>
+          <h3>Welcome to Nāda</h3>
+          <p>Nāda plays music from your local files. Nothing is uploaded, nothing is tracked.</p>
+          <div class="notice-steps">
+            <span>Select your music folder using the bar above to get started. Nāda will read the metadata from your files and build a browsable library.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Artists View -->
+    <div class="view" id="view-artists">
+      <div class="breadcrumb" aria-label="Navigation">
+        <span>Artists</span>
+        <span style="margin-left: auto; color: var(--varna-muted); font-size: 0.75rem;" id="artist-count"></span>
+      </div>
+      <div class="card-grid" id="artist-grid"></div>
+      <div class="pagination" id="artist-pagination"></div>
+    </div>
+
+    <!-- Albums by Artist View -->
+    <div class="view" id="view-artist-albums">
+      <div class="breadcrumb" aria-label="Navigation">
+        <button onclick="showView('artists')">Artists</button>
+        <span class="sep">›</span>
+        <span id="artist-albums-name"></span>
+      </div>
+      <div class="card-grid" id="artist-albums-grid"></div>
+    </div>
+
+    <!-- Album Detail View (tracks) -->
+    <div class="view" id="view-album">
+      <div class="breadcrumb" aria-label="Navigation">
+        <button onclick="showView('artists')">Artists</button>
+        <span class="sep">›</span>
+        <button id="album-artist-link"></button>
+        <span class="sep">›</span>
+        <span id="album-name-crumb"></span>
+      </div>
+      <div class="album-header">
+        <div class="card-art" id="album-detail-art"></div>
+        <div class="album-info">
+          <h2 id="album-detail-title"></h2>
+          <button class="artist-link" id="album-detail-artist"></button>
+          <div class="album-meta" id="album-detail-meta"></div>
+          <button class="btn-play-album" onclick="playAlbum()">▶ Play Album</button>
+        </div>
+      </div>
+      <div class="track-list" id="track-list"></div>
+    </div>
+
+    <!-- All Albums View -->
+    <div class="view" id="view-albums">
+      <div class="breadcrumb" aria-label="Navigation">
+        <span>Albums</span>
+        <span style="margin-left: auto; color: var(--varna-muted); font-size: 0.75rem;" id="album-count"></span>
+      </div>
+      <div class="card-grid" id="all-albums-grid"></div>
+      <div class="pagination" id="album-pagination"></div>
+    </div>
+
+    <!-- Queue View -->
+    <div class="view" id="view-queue">
+      <div class="breadcrumb"><span>Queue</span></div>
+      <div class="queue-list" id="queue-list"></div>
+    </div>
+
+    <!-- Settings View -->
+    <div class="view" id="view-settings">
+      <div class="breadcrumb"><span>Settings</span></div>
+      <div class="settings-group">
+        <h3>Library</h3>
+        <div class="setting-row">
+          <span class="setting-label">Music folder</span>
+          <span class="setting-value" id="settings-folder">Not selected</span>
+        </div>
+        <div class="setting-row">
+          <span class="setting-label">Tracks indexed</span>
+          <span class="setting-value" id="settings-tracks">—</span>
+        </div>
+        <div class="setting-row">
+          <span class="setting-label">Last indexed</span>
+          <span class="setting-value" id="settings-indexed">—</span>
+        </div>
+      </div>
+      <div class="settings-group">
+        <h3>Storage</h3>
+        <div class="setting-row">
+          <span class="setting-label">Metadata cache</span>
+          <span class="setting-value">—</span>
+        </div>
+        <div class="setting-row">
+          <span class="setting-label">Audio cache</span>
+          <span class="setting-value">None (not enabled)</span>
+        </div>
+      </div>
+      <div class="settings-group">
+        <h3>About</h3>
+        <div class="setting-row">
+          <span class="setting-label">Version</span>
+          <span class="setting-value">0.1.0</span>
+        </div>
+        <div class="setting-row">
+          <span class="setting-label">License</span>
+          <span class="setting-value">AGPL-3.0</span>
+        </div>
+        <div class="setting-row">
+          <span class="setting-label">Telemetry</span>
+          <span class="setting-value" style="color: var(--varna-success);">None. Ever.</span>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ═══ Now Playing Bar ═══ -->
+  <div class="now-playing" id="now-playing" role="complementary" aria-label="Now playing">
+    <div class="np-content">
+      <div class="np-art">🎵</div>
+      <div class="np-info">
+        <div class="np-title" id="np-title">—</div>
+        <div class="np-artist" id="np-artist">—</div>
+      </div>
+      <div class="np-controls">
+        <button title="Previous" aria-label="Previous track">⏮</button>
+        <button class="play-btn" title="Play/Pause" aria-label="Play or pause" id="play-pause-btn" onclick="togglePlay()">▶</button>
+        <button title="Next" aria-label="Next track">⏭</button>
+      </div>
+    </div>
+    <div class="np-progress">
+      <span class="np-time">3:14</span>
+      <div class="progress-bar" role="slider" aria-label="Seek" aria-valuenow="35" aria-valuemin="0" aria-valuemax="100">
+        <div class="progress-fill"></div>
+      </div>
+      <span class="np-time end">9:22</span>
+    </div>
+  </div>
+
+  <!-- ═══ Navigation Tabs ═══ -->
+  <nav class="pantha" role="tablist" aria-label="Main navigation">
+    <button role="tab" onclick="navTo('artists')" id="tab-artists" aria-selected="true" class="active">
+      <span class="tab-icon">👤</span> Artists
+    </button>
+    <button role="tab" onclick="navTo('albums')" id="tab-albums" aria-selected="false">
+      <span class="tab-icon">💿</span> Albums
+    </button>
+    <button role="tab" onclick="navTo('queue')" id="tab-queue" aria-selected="false">
+      <span class="tab-icon">☰</span> Queue
+    </button>
+    <button role="tab" onclick="navTo('settings')" id="tab-settings" aria-selected="false">
+      <span class="tab-icon">⚙</span> Settings
+    </button>
+  </nav>
+</div>
+
+<script>
+// ═══════════════════════════════════════════
+// Mock Data
+// ═══════════════════════════════════════════
+const ARTISTS = [
+  { id: 'miles-davis', name: 'Miles Davis', albumCount: 4, art: '🎺' },
+  { id: 'john-coltrane', name: 'John Coltrane', albumCount: 3, art: '🎷' },
+  { id: 'thelonious-monk', name: 'Thelonious Monk', albumCount: 2, art: '🎹' },
+  { id: 'bill-evans', name: 'Bill Evans', albumCount: 3, art: '🎹' },
+  { id: 'charles-mingus', name: 'Charles Mingus', albumCount: 2, art: '🎸' },
+  { id: 'dave-brubeck', name: 'Dave Brubeck', albumCount: 2, art: '🎹' },
+  { id: 'art-blakey', name: 'Art Blakey', albumCount: 2, art: '🥁' },
+  { id: 'wayne-shorter', name: 'Wayne Shorter', albumCount: 2, art: '🎷' },
+  { id: 'herbie-hancock', name: 'Herbie Hancock', albumCount: 3, art: '🎹' },
+  { id: 'cannonball-adderley', name: 'Cannonball Adderley', albumCount: 2, art: '🎷' },
+  { id: 'ornette-coleman', name: 'Ornette Coleman', albumCount: 2, art: '🎷' },
+  { id: 'sonny-rollins', name: 'Sonny Rollins', albumCount: 3, art: '🎷' },
+  { id: 'dizzy-gillespie', name: 'Dizzy Gillespie', albumCount: 2, art: '🎺' },
+  { id: 'charlie-parker', name: 'Charlie Parker', albumCount: 3, art: '🎷' },
+  { id: 'nina-simone', name: 'Nina Simone', albumCount: 2, art: '🎤' },
+  { id: 'alice-coltrane', name: 'Alice Coltrane', albumCount: 2, art: '🎹' },
+  { id: 'pharoah-sanders', name: 'Pharoah Sanders', albumCount: 2, art: '🎷' },
+  { id: 'sun-ra', name: 'Sun Ra', albumCount: 4, art: '🪐' },
+  { id: 'eric-dolphy', name: 'Eric Dolphy', albumCount: 2, art: '🎷' },
+  { id: 'cecil-taylor', name: 'Cecil Taylor', albumCount: 2, art: '🎹' },
+  { id: 'max-roach', name: 'Max Roach', albumCount: 2, art: '🥁' },
+  { id: 'dexter-gordon', name: 'Dexter Gordon', albumCount: 2, art: '🎷' },
+  { id: 'bud-powell', name: 'Bud Powell', albumCount: 2, art: '🎹' },
+  { id: 'lee-morgan', name: 'Lee Morgan', albumCount: 2, art: '🎺' },
+];
+
+const ALBUMS = {
+  'miles-davis': [
+    { id: 'kind-of-blue', title: 'Kind of Blue', year: 1959, art: '💙',
+      tracks: [
+        { num: 1, title: 'So What', dur: '9:22' },
+        { num: 2, title: 'Freddie Freeloader', dur: '9:46' },
+        { num: 3, title: 'Blue in Green', dur: '5:37' },
+        { num: 4, title: 'All Blues', dur: '11:33' },
+        { num: 5, title: 'Flamenco Sketches', dur: '9:26' },
+      ]},
+    { id: 'bitches-brew', title: 'Bitches Brew', year: 1970, art: '🌀',
+      tracks: [
+        { num: 1, title: "Pharaoh's Dance", dur: '20:05' },
+        { num: 2, title: 'Bitches Brew', dur: '26:58' },
+        { num: 3, title: 'Spanish Key', dur: '17:32' },
+        { num: 4, title: 'John McLaughlin', dur: '4:23' },
+        { num: 5, title: 'Miles Runs the Voodoo Down', dur: '14:01' },
+        { num: 6, title: 'Sanctuary', dur: '10:56' },
+      ]},
+    { id: 'in-a-silent-way', title: 'In a Silent Way', year: 1969, art: '🌅',
+      tracks: [
+        { num: 1, title: 'Shhh/Peaceful', dur: '18:12' },
+        { num: 2, title: "In a Silent Way/It's About That Time", dur: '19:52' },
+      ]},
+    { id: 'sketches-of-spain', title: 'Sketches of Spain', year: 1960, art: '🇪🇸',
+      tracks: [
+        { num: 1, title: 'Concierto de Aranjuez', dur: '16:19' },
+        { num: 2, title: "Will o' the Wisp", dur: '3:54' },
+        { num: 3, title: 'The Pan Piper', dur: '3:51' },
+        { num: 4, title: 'Saeta', dur: '5:05' },
+        { num: 5, title: 'Solea', dur: '12:14' },
+      ]},
+  ],
+  'john-coltrane': [
+    { id: 'a-love-supreme', title: 'A Love Supreme', year: 1965, art: '🙏',
+      tracks: [
+        { num: 1, title: 'Acknowledgement', dur: '7:43' },
+        { num: 2, title: 'Resolution', dur: '7:20' },
+        { num: 3, title: 'Pursuance', dur: '10:42' },
+        { num: 4, title: 'Psalm', dur: '7:05' },
+      ]},
+    { id: 'blue-train', title: 'Blue Train', year: 1958, art: '🚂',
+      tracks: [
+        { num: 1, title: 'Blue Train', dur: '10:40' },
+        { num: 2, title: "Moment's Notice", dur: '9:10' },
+        { num: 3, title: 'Locomotion', dur: '7:14' },
+        { num: 4, title: "I'm Old Fashioned", dur: '7:56' },
+        { num: 5, title: 'Lazy Bird', dur: '7:04' },
+      ]},
+    { id: 'giant-steps', title: 'Giant Steps', year: 1960, art: '👣',
+      tracks: [
+        { num: 1, title: 'Giant Steps', dur: '4:46' },
+        { num: 2, title: 'Cousin Mary', dur: '5:50' },
+        { num: 3, title: 'Countdown', dur: '2:21' },
+        { num: 4, title: 'Spiral', dur: '5:57' },
+        { num: 5, title: "Syeeda's Song Flute", dur: '7:02' },
+        { num: 6, title: 'Naima', dur: '4:23' },
+        { num: 7, title: 'Mr. P.C.', dur: '6:57' },
+      ]},
+  ],
+  'thelonious-monk': [
+    { id: 'brilliant-corners', title: 'Brilliant Corners', year: 1957, art: '💎',
+      tracks: [
+        { num: 1, title: 'Brilliant Corners', dur: '7:44' },
+        { num: 2, title: 'Ba-Lue Bolivar Ba-Lues-Are', dur: '13:28' },
+        { num: 3, title: 'Pannonica', dur: '8:49' },
+        { num: 4, title: 'I Surrender, Dear', dur: '5:28' },
+        { num: 5, title: 'Bemsha Swing', dur: '5:33' },
+      ]},
+    { id: 'monks-dream', title: "Monk's Dream", year: 1963, art: '💤',
+      tracks: [
+        { num: 1, title: "Monk's Dream", dur: '6:02' },
+        { num: 2, title: 'Body and Soul', dur: '5:36' },
+        { num: 3, title: 'Bright Mississippi', dur: '8:19' },
+        { num: 4, title: 'Five Spot Blues', dur: '3:42' },
+        { num: 5, title: 'Bolivar Blues', dur: '6:45' },
+        { num: 6, title: 'Just a Gigolo', dur: '3:33' },
+        { num: 7, title: 'Bye-Ya', dur: '5:28' },
+      ]},
+  ],
+};
+
+// Fill stubs for artists without detailed data
+ARTISTS.forEach(a => {
+  if (!ALBUMS[a.id]) {
+    ALBUMS[a.id] = [
+      { id: a.id + '-1', title: 'Album One', year: 1960, art: a.art, tracks: [
+        { num: 1, title: 'Track 1', dur: '5:30' }, { num: 2, title: 'Track 2', dur: '4:15' },
+        { num: 3, title: 'Track 3', dur: '6:42' }, { num: 4, title: 'Track 4', dur: '3:58' },
+      ]},
+      { id: a.id + '-2', title: 'Album Two', year: 1965, art: a.art, tracks: [
+        { num: 1, title: 'Track 1', dur: '7:10' }, { num: 2, title: 'Track 2', dur: '5:55' },
+        { num: 3, title: 'Track 3', dur: '8:20' },
+      ]},
+    ];
+  }
+});
+
+const ALL_ALBUMS = [];
+ARTISTS.forEach(a => {
+  (ALBUMS[a.id] || []).forEach(alb => {
+    ALL_ALBUMS.push({ ...alb, artist: a.name, artistId: a.id });
+  });
+});
+ALL_ALBUMS.sort((a, b) => a.title.localeCompare(b.title));
+
+// ═══════════════════════════════════════════
+// State
+// ═══════════════════════════════════════════
+let libraryLoaded = false;
+let isPlaying = false;
+let currentView = 'empty';
+let artistPage = 0;
+let albumPage = 0;
+let currentlyPlayingTrack = null;
+const ITEMS_PER_PAGE = 12;
+
+// ═══════════════════════════════════════════
+// View Management
+// ═══════════════════════════════════════════
+function showView(id) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById('view-' + id).classList.add('active');
+  currentView = id;
+}
+
+function navTo(id) {
+  if (!libraryLoaded && (id === 'artists' || id === 'albums' || id === 'queue')) {
+    showView('empty');
+  } else {
+    showView(id);
+  }
+  // Update tabs
+  document.querySelectorAll('.pantha button').forEach(b => {
+    b.classList.remove('active');
+    b.setAttribute('aria-selected', 'false');
+  });
+  const tab = document.getElementById('tab-' + id);
+  if (tab) {
+    tab.classList.add('active');
+    tab.setAttribute('aria-selected', 'true');
+  }
+}
+
+// ═══════════════════════════════════════════
+// Open Folder (simulated)
+// ═══════════════════════════════════════════
+function openFolder() {
+  libraryLoaded = true;
+
+  // Update folder bar
+  const pathEl = document.getElementById('folder-path');
+  pathEl.textContent = '/home/user/Music';
+  pathEl.classList.remove('empty');
+  document.getElementById('folder-btn').textContent = 'Change Folder';
+
+  // Update settings
+  const totalTracks = ALL_ALBUMS.reduce((s, a) => s + a.tracks.length, 0);
+  document.getElementById('settings-folder').textContent = '/home/user/Music';
+  document.getElementById('settings-tracks').textContent = totalTracks;
+  document.getElementById('settings-indexed').textContent = 'Just now';
+
+  // Render views
+  renderArtists();
+  renderAllAlbums();
+  renderQueue();
+  navTo('artists');
+}
+
+// ═══════════════════════════════════════════
+// Pagination (fixed: no hyphenated global names)
+// ═══════════════════════════════════════════
+const pageCallbacks = {};
+
+function renderPagination(containerId, totalPages, currentPage, onPageChange) {
+  const container = document.getElementById(containerId);
+  if (totalPages <= 1) { container.innerHTML = ''; return; }
+
+  pageCallbacks[containerId] = onPageChange;
+
+  let html = '';
+  html += '<button ' + (currentPage === 0 ? 'disabled' : '') +
+    ' onclick="pageCallbacks[\'' + containerId + '\'](' + (currentPage - 1) + ')">&#8249; Prev</button>';
+
+  for (let i = 0; i < totalPages; i++) {
+    html += '<button class="' + (i === currentPage ? 'current' : '') +
+      '" onclick="pageCallbacks[\'' + containerId + '\'](' + i + ')">' + (i + 1) + '</button>';
+  }
+
+  html += '<button ' + (currentPage === totalPages - 1 ? 'disabled' : '') +
+    ' onclick="pageCallbacks[\'' + containerId + '\'](' + (currentPage + 1) + ')">Next &#8250;</button>';
+
+  container.innerHTML = html;
+}
+
+// ═══════════════════════════════════════════
+// Artists View (paginated)
+// ═══════════════════════════════════════════
+function renderArtists() {
+  const grid = document.getElementById('artist-grid');
+  const totalPages = Math.ceil(ARTISTS.length / ITEMS_PER_PAGE);
+  const start = artistPage * ITEMS_PER_PAGE;
+  const page = ARTISTS.slice(start, start + ITEMS_PER_PAGE);
+
+  document.getElementById('artist-count').textContent = ARTISTS.length + ' artists';
+
+  grid.innerHTML = page.map(a =>
+    '<button class="card" onclick="showArtistAlbums(\'' + a.id + '\')">' +
+      '<div class="card-art round">' + a.art + '</div>' +
+      '<div class="card-name">' + a.name + '</div>' +
+      '<div class="card-meta">' + a.albumCount + ' albums</div>' +
+    '</button>'
+  ).join('');
+
+  renderPagination('artist-pagination', totalPages, artistPage, function(p) {
+    artistPage = p;
+    renderArtists();
+  });
+}
+
+// ═══════════════════════════════════════════
+// All Albums View (paginated)
+// ═══════════════════════════════════════════
+function renderAllAlbums() {
+  const grid = document.getElementById('all-albums-grid');
+  const totalPages = Math.ceil(ALL_ALBUMS.length / ITEMS_PER_PAGE);
+  const start = albumPage * ITEMS_PER_PAGE;
+  const page = ALL_ALBUMS.slice(start, start + ITEMS_PER_PAGE);
+
+  document.getElementById('album-count').textContent = ALL_ALBUMS.length + ' albums';
+
+  grid.innerHTML = page.map(a =>
+    '<button class="card" onclick="showAlbumDetail(\'' + a.id + '\')">' +
+      '<div class="card-art">' + a.art + '</div>' +
+      '<div class="card-name">' + escHtml(a.title) + '</div>' +
+      '<div class="card-meta">' + escHtml(a.artist) + ' &middot; ' + a.year + '</div>' +
+    '</button>'
+  ).join('');
+
+  renderPagination('album-pagination', totalPages, albumPage, function(p) {
+    albumPage = p;
+    renderAllAlbums();
+  });
+}
+
+// ═══════════════════════════════════════════
+// Artist Albums View
+// ═══════════════════════════════════════════
+function showArtistAlbums(artistId) {
+  const artist = ARTISTS.find(a => a.id === artistId);
+  const albums = ALBUMS[artistId] || [];
+
+  document.getElementById('artist-albums-name').textContent = artist.name;
+
+  const grid = document.getElementById('artist-albums-grid');
+  grid.innerHTML = albums.map(a =>
+    '<button class="card" onclick="showAlbumDetail(\'' + a.id + '\')">' +
+      '<div class="card-art">' + a.art + '</div>' +
+      '<div class="card-name">' + escHtml(a.title) + '</div>' +
+      '<div class="card-meta">' + a.year + ' &middot; ' + a.tracks.length + ' tracks</div>' +
+    '</button>'
+  ).join('');
+
+  showView('artist-albums');
+}
+
+// ═══════════════════════════════════════════
+// Album Detail View
+// ═══════════════════════════════════════════
+let currentAlbumId = null;
+let currentArtistId = null;
+
+function showAlbumDetail(albumId) {
+  let album, artist;
+  for (const a of ARTISTS) {
+    const found = (ALBUMS[a.id] || []).find(alb => alb.id === albumId);
+    if (found) { album = found; artist = a; break; }
+  }
+  if (!album) return;
+
+  currentAlbumId = albumId;
+  currentArtistId = artist.id;
+
+  document.getElementById('album-artist-link').textContent = artist.name;
+  document.getElementById('album-artist-link').onclick = function() { showArtistAlbums(artist.id); };
+  document.getElementById('album-name-crumb').textContent = album.title;
+  document.getElementById('album-detail-art').textContent = album.art;
+  document.getElementById('album-detail-title').textContent = album.title;
+  document.getElementById('album-detail-artist').textContent = artist.name;
+  document.getElementById('album-detail-artist').onclick = function() { showArtistAlbums(artist.id); };
+
+  const totalDur = album.tracks.reduce(function(sum, t) {
+    const parts = t.dur.split(':').map(Number);
+    return sum + parts[0] * 60 + parts[1];
+  }, 0);
+  document.getElementById('album-detail-meta').textContent =
+    album.year + ' \u00B7 ' + album.tracks.length + ' tracks \u00B7 ' + Math.floor(totalDur / 60) + ' min';
+
+  const list = document.getElementById('track-list');
+  list.innerHTML = album.tracks.map(function(t) {
+    const isPlaying = currentlyPlayingTrack &&
+      currentlyPlayingTrack.title === t.title &&
+      currentlyPlayingTrack.albumId === albumId;
+    return '<div class="track-row' + (isPlaying ? ' playing' : '') + '" onclick="playTrack(\'' +
+      escAttr(t.title) + "','" + escAttr(artist.name) + "','" + escAttr(album.title) + "','" + albumId + '\')">' +
+      '<span class="track-num">' + (isPlaying ? '▶' : t.num) + '</span>' +
+      '<span class="track-title">' + escHtml(t.title) + '</span>' +
+      '<span class="track-dur">' + t.dur + '</span>' +
+    '</div>';
+  }).join('');
+
+  showView('album');
+}
+
+// ═══════════════════════════════════════════
+// Queue View
+// ═══════════════════════════════════════════
+function renderQueue() {
+  const list = document.getElementById('queue-list');
+  // Default queue: Kind of Blue
+  const kob = ALBUMS['miles-davis'][0];
+  let html = '<div class="queue-section-label">Now Playing</div>';
+  html += '<div class="queue-row playing" onclick="showAlbumDetail(\'kind-of-blue\')">' +
+    '<div class="queue-art">💙</div>' +
+    '<div class="queue-info"><div class="queue-title">So What</div>' +
+    '<div class="queue-meta">Miles Davis \u2014 Kind of Blue</div></div>' +
+    '<span class="track-dur">9:22</span></div>';
+
+  html += '<div class="queue-section-label" style="margin-top: var(--akasa-vicara);">Up Next</div>';
+  kob.tracks.slice(1).forEach(function(t) {
+    html += '<div class="queue-row">' +
+      '<div class="queue-art">💙</div>' +
+      '<div class="queue-info"><div class="queue-title">' + escHtml(t.title) + '</div>' +
+      '<div class="queue-meta">Miles Davis \u2014 Kind of Blue</div></div>' +
+      '<span class="track-dur">' + t.dur + '</span></div>';
+  });
+  list.innerHTML = html;
+}
+
+// ═══════════════════════════════════════════
+// Playback (simulated)
+// ═══════════════════════════════════════════
+function playTrack(title, artist, album, albumId) {
+  currentlyPlayingTrack = { title: title, albumId: albumId };
+  document.getElementById('np-title').textContent = title;
+  document.getElementById('np-artist').textContent = artist + ' \u2014 ' + album;
+  document.getElementById('now-playing').classList.add('visible');
+  isPlaying = true;
+  document.getElementById('play-pause-btn').textContent = '\u23F8';
+  // Re-render current album to update playing indicator
+  if (currentAlbumId) showAlbumDetail(currentAlbumId);
+}
+
+function playAlbum() {
+  var firstRow = document.querySelector('#track-list .track-row');
+  if (firstRow) firstRow.click();
+}
+
+function togglePlay() {
+  isPlaying = !isPlaying;
+  document.getElementById('play-pause-btn').textContent = isPlaying ? '\u23F8' : '\u25B6';
+}
+
+// ═══════════════════════════════════════════
+// Utilities
+// ═══════════════════════════════════════════
+function escHtml(s) {
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+function escAttr(s) {
+  return s.replace(/'/g, "\\'").replace(/"/g, '\\"');
+}
+
+// Initialize: show empty state with Artists tab active
+navTo('artists');
+</script>
+</body>
+</html>

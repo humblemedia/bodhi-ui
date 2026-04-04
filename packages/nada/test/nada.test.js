@@ -119,6 +119,36 @@ describe('Nāda Brand Tokens', () => {
   });
 });
 
+// ── Web Worker ────────────────────────────────────────────────
+
+describe('Web Worker for Metadata Parsing', () => {
+  it('index-worker.js exists', () => {
+    assert.ok(existsSync(resolve(ROOT, 'src/workers/index-worker.js')));
+  });
+
+  it('index-worker.js listens for message events', () => {
+    const src = readFileSync(resolve(ROOT, 'src/workers/index-worker.js'), 'utf8');
+    assert.ok(src.includes("addEventListener('message'"), 'Worker must listen for messages');
+  });
+
+  it('index-worker.js posts progress and done messages', () => {
+    const src = readFileSync(resolve(ROOT, 'src/workers/index-worker.js'), 'utf8');
+    assert.ok(src.includes("type: 'progress'"), 'Worker must post progress');
+    assert.ok(src.includes("type: 'done'"), 'Worker must post done');
+  });
+
+  it('library.js exports indexProgress signal', async () => {
+    // Dynamic import to verify export exists
+    const libSrc = readFileSync(resolve(ROOT, 'src/cetana/library.js'), 'utf8');
+    assert.ok(libSrc.includes('export const indexProgress'), 'Must export indexProgress signal');
+  });
+
+  it('library.js falls back to main thread when Worker unavailable', () => {
+    const libSrc = readFileSync(resolve(ROOT, 'src/cetana/library.js'), 'utf8');
+    assert.ok(libSrc.includes("typeof Worker !== 'undefined'"), 'Must check Worker availability');
+  });
+});
+
 // ── M1-M9 Compliance (structural checks) ─────────────────────
 
 describe('Bodhi M1-M9 Compliance', () => {

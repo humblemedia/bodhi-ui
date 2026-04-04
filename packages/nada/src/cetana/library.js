@@ -1,19 +1,83 @@
 /**
- * Nāda Library — metadata indexing and OPFS caching
+ * Nada Library — metadata indexing and OPFS caching
  */
 
+import { signal } from '@bodhi/cetana';
 import { library } from './app.js';
+
+/** Progress signal: { current, total } or null when idle */
+export const indexProgress = signal(null);
 
 /**
  * Index audio files — parse metadata and build library structure.
- * Runs metadata parsing in a Web Worker when available.
+ * Runs metadata parsing in a Web Worker when available,
+ * falls back to main thread in environments without Worker support.
  */
 export async function indexFiles(audioFiles) {
-  const tracks = [];
+  let tracks;
 
-  for (const file of audioFiles) {
+  if (typeof Worker !== 'undefined') {
+    tracks = await indexInWorker(audioFiles);
+  } else {
+    tracks = await indexOnMainThread(audioFiles);
+  }
+
+  buildLibrary(tracks, audioFiles);
+  indexProgress.set(null);
+  await cacheLibrary(tracks);
+}
+
+/**
+ * Parse metadata in a Web Worker (off main thread).
+ * Files are read to ArrayBuffer on main thread and transferred.
+ */
+async function indexInWorker(audioFiles) {
+  const fileData = await Promise.all(
+    audioFiles.map(async (file) => ({
+      name: file.name,
+      size: file.size,
+      buffer: await file.arrayBuffer(),
+    }))
+  );
+
+  return new Promise((resolve) => {
+    const worker = new Worker(
+      new URL('../workers/index-worker.js', import.meta.url),
+      { type: 'module' }
+    );
+
+    worker.addEventListener('message', (event) => {
+      const msg = event.data;
+      if (msg.type === 'progress') {
+        indexProgress.set({ current: msg.current, total: msg.total });
+      } else if (msg.type === 'done') {
+        worker.terminate();
+        // Re-attach file references (can't transfer File objects)
+        const fileMap = new Map(audioFiles.map(f => [f.name + f.size, f]));
+        const tracks = msg.tracks.map(t => ({
+          ...t,
+          file: fileMap.get(t.id) || null,
+        }));
+        resolve(tracks);
+      }
+    });
+
+    // Transfer buffers for zero-copy
+    const transferables = fileData.map(f => f.buffer);
+    worker.postMessage({ files: fileData }, transferables);
+  });
+}
+
+/**
+ * Parse metadata on the main thread (fallback for test/no-Worker envs).
+ */
+async function indexOnMainThread(audioFiles) {
+  const tracks = [];
+  const total = audioFiles.length;
+
+  for (let i = 0; i < total; i++) {
+    const file = audioFiles[i];
     try {
-      // Dynamic import — music-metadata is a browser dependency
       const mm = await import('music-metadata');
       const metadata = await mm.parseBlob(file, { skipCovertArt: true });
       tracks.push({
@@ -27,7 +91,6 @@ export async function indexFiles(audioFiles) {
         file,
       });
     } catch {
-      // Fallback: use filename as title
       tracks.push({
         id: file.name + file.size,
         title: file.name.replace(/\.[^.]+$/, ''),
@@ -39,9 +102,16 @@ export async function indexFiles(audioFiles) {
         file,
       });
     }
+    indexProgress.set({ current: i + 1, total });
   }
 
-  // Build artist/album structure
+  return tracks;
+}
+
+/**
+ * Build artist/album structure from tracks and set the library signal.
+ */
+function buildLibrary(tracks, audioFiles) {
   const artistMap = new Map();
   const albumMap = new Map();
 
@@ -63,7 +133,6 @@ export async function indexFiles(audioFiles) {
     albumMap.get(albumKey).tracks.push(track);
   }
 
-  // Sort tracks within albums by track number
   for (const album of albumMap.values()) {
     album.tracks.sort((a, b) => a.track - b.track);
   }
@@ -76,9 +145,6 @@ export async function indexFiles(audioFiles) {
     albums: [...albumMap.values()].sort((a, b) => a.title.localeCompare(b.title)),
     tracks,
   });
-
-  // Cache to OPFS if available
-  await cacheLibrary(tracks);
 }
 
 async function cacheLibrary(tracks) {
