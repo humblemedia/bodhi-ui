@@ -119,6 +119,51 @@ describe('Nāda Brand Tokens', () => {
   });
 });
 
+// ── Render Module ─────────────────────────────────────────────
+
+describe('Render Module', () => {
+  it('render.js exists', () => {
+    assert.ok(existsSync(resolve(ROOT, 'src/cetana/render.js')));
+  });
+
+  it('render.js exports renderApp function', () => {
+    const src = readFileSync(resolve(ROOT, 'src/cetana/render.js'), 'utf8');
+    assert.ok(src.includes('export function renderApp'));
+  });
+
+  it('render.js maps all bind values used in specs', () => {
+    const src = readFileSync(resolve(ROOT, 'src/cetana/render.js'), 'utf8');
+    // Key bindings that must be in the signal map or handled by list rendering
+    const requiredBinds = ['folderPath', 'trackTitle', 'trackArtist', 'breadcrumb', 'indexProgress'];
+    for (const bind of requiredBinds) {
+      assert.ok(src.includes(bind), `Missing signal mapping for: ${bind}`);
+    }
+  });
+
+  it('render.js maps all action values used in specs', () => {
+    const src = readFileSync(resolve(ROOT, 'src/cetana/render.js'), 'utf8');
+    const requiredActions = [
+      'openFolder', 'showArtists', 'showAlbums', 'showQueue',
+      'togglePlay', 'nextTrack', 'prevTrack', 'setVolume', 'toggleTheme',
+      'selectArtist', 'selectAlbum', 'breadcrumbBack',
+    ];
+    for (const action of requiredActions) {
+      assert.ok(src.includes(action), `Missing action mapping for: ${action}`);
+    }
+  });
+
+  it('render.js uses no eval or dynamic window lookup', () => {
+    const src = readFileSync(resolve(ROOT, 'src/cetana/render.js'), 'utf8');
+    assert.ok(!src.includes('eval('), 'Must not use eval');
+    assert.ok(!src.includes('window['), 'Must not use window[] dynamic lookup');
+  });
+
+  it('build inlines compiled HTML into dist/index.html', () => {
+    const distIndex = readFileSync(resolve(DIST_DIR, 'index.html'), 'utf8');
+    assert.ok(distIndex.includes('data-bodhi-component="NadaShell"'), 'Compiled shell should be inlined');
+  });
+});
+
 // ── Breadcrumb Navigation ─────────────────────────────────────
 
 describe('Breadcrumb Navigation', () => {

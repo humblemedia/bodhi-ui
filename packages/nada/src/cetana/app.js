@@ -95,6 +95,19 @@ export function initApp(root) {
       document.documentElement.setAttribute('data-bodhi-theme', t);
     }));
 
+    // Connect compiled HTML to signals via render module (browser only)
+    if (typeof document !== 'undefined') {
+      import('./render.js').then(({ renderApp }) => {
+        const compiledHtml = el.innerHTML;
+        if (compiledHtml.trim()) {
+          const cleanup = renderApp(el, compiledHtml);
+          unsubs.push(cleanup);
+        }
+      }).catch(() => {
+        // render.js not available (e.g. in tests)
+      });
+    }
+
     return () => unsubs.forEach(fn => fn());
   });
 }

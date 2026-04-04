@@ -49,10 +49,17 @@ writeFileSync(join(DIST_DIR, 'components.html'), allHtml.join('\n\n'), 'utf8');
 writeFileSync(join(DIST_DIR, 'components.css'), allCss.join('\n'), 'utf8');
 if (allJs.length) writeFileSync(join(DIST_DIR, 'components.js'), allJs.join('\n\n'), 'utf8');
 
-// Copy index.html
+// Build index.html with inlined compiled HTML
 const indexSrc = resolve(ROOT, 'src/index.html');
 try {
-  copyFileSync(indexSrc, join(DIST_DIR, 'index.html'));
+  let indexContent = readFileSync(indexSrc, 'utf8');
+  // Inject compiled HTML into #nada-root
+  const compiledMarkup = allHtml.join('\n  ');
+  indexContent = indexContent.replace(
+    /<!-- Compiled Bodhi components injected here by build -->\s*<div id="nada-root"><\/div>/,
+    `<div id="nada-root">\n  ${compiledMarkup}\n  </div>`
+  );
+  writeFileSync(join(DIST_DIR, 'index.html'), indexContent, 'utf8');
 } catch {
   // Generate a default index.html
   writeFileSync(join(DIST_DIR, 'index.html'), generateIndexHtml(), 'utf8');
@@ -63,6 +70,18 @@ try {
   copyFileSync(join(STATIC_DIR, 'sw.js'), join(DIST_DIR, 'sw.js'));
 } catch {
   console.log('  No service worker found, skipping.');
+}
+
+// Copy cetana app modules to dist
+const CETANA_DIR = resolve(ROOT, 'src/cetana');
+try {
+  mkdirSync(join(DIST_DIR, 'cetana'), { recursive: true });
+  const cetanaFiles = readdirSync(CETANA_DIR).filter(f => f.endsWith('.js'));
+  for (const f of cetanaFiles) {
+    copyFileSync(join(CETANA_DIR, f), join(DIST_DIR, 'cetana', f));
+  }
+} catch {
+  // No cetana modules — that's fine
 }
 
 // Copy web worker
