@@ -73,6 +73,13 @@ children:
           aria-selected: "false"
           aria-controls: "queue"
 
+  - component: BreadcrumbBar
+    yantra: Pantha
+    class: breadcrumb-nav
+    attributes:
+      aria-label: "Breadcrumb navigation"
+    bind: breadcrumb
+
   - component: MainContent
     yantra: Garbha
     mudras: [Gupta]

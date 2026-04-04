@@ -119,6 +119,46 @@ describe('Nāda Brand Tokens', () => {
   });
 });
 
+// ── Breadcrumb Navigation ─────────────────────────────────────
+
+describe('Breadcrumb Navigation', () => {
+  it('views.js exports breadcrumb signals and navigation functions', () => {
+    const src = readFileSync(resolve(ROOT, 'src/cetana/views.js'), 'utf8');
+    assert.ok(src.includes('export const selectedArtist'), 'Must export selectedArtist');
+    assert.ok(src.includes('export const selectedAlbum'), 'Must export selectedAlbum');
+    assert.ok(src.includes('export const breadcrumb'), 'Must export breadcrumb');
+    assert.ok(src.includes('export function selectArtist'), 'Must export selectArtist');
+    assert.ok(src.includes('export function selectAlbum'), 'Must export selectAlbum');
+    assert.ok(src.includes('export function breadcrumbBack'), 'Must export breadcrumbBack');
+    assert.ok(src.includes('export function showArtistAlbums'), 'Must export showArtistAlbums');
+  });
+
+  it('views.js exports filteredAlbums and filteredTracks computed values', () => {
+    const src = readFileSync(resolve(ROOT, 'src/cetana/views.js'), 'utf8');
+    assert.ok(src.includes('export const filteredAlbums'), 'Must export filteredAlbums');
+    assert.ok(src.includes('export const filteredTracks'), 'Must export filteredTracks');
+  });
+
+  it('breadcrumb.bodhi.yaml compiles without errors', () => {
+    const yaml = readFileSync(resolve(SPECS_DIR, 'breadcrumb.bodhi.yaml'), 'utf8');
+    const result = compile(yaml);
+    assert.deepEqual(result.errors, [], `Errors: ${result.errors.join(', ')}`);
+    assert.ok(result.html.includes('aria-label="Breadcrumb"'));
+  });
+
+  it('shell includes breadcrumb navigation', () => {
+    const yaml = readFileSync(resolve(SPECS_DIR, 'shell.bodhi.yaml'), 'utf8');
+    const result = compile(yaml);
+    assert.ok(result.html.includes('aria-label="Breadcrumb navigation"'));
+  });
+
+  it('selectArtist resets page to 0', () => {
+    const src = readFileSync(resolve(ROOT, 'src/cetana/views.js'), 'utf8');
+    // selectArtist function should reset page
+    assert.ok(src.includes('page.set(0)'), 'Must reset page on navigation');
+  });
+});
+
 // ── Web Worker ────────────────────────────────────────────────
 
 describe('Web Worker for Metadata Parsing', () => {

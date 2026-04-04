@@ -1,0 +1,13 @@
+# Nada Breadcrumb Navigation
+component: Breadcrumb
+yantra: Pantha
+class: breadcrumb-nav
+attributes:
+  aria-label: "Breadcrumb"
+bind: breadcrumb
+
+children:
+  - yantra: Kriya
+    class: breadcrumb-link
+    bind: breadcrumbLabel
+    on: { click: breadcrumbBack }
