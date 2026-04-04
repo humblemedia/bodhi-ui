@@ -47,7 +47,21 @@ for (const file of specFiles) {
 // Write combined outputs
 writeFileSync(join(DIST_DIR, 'components.html'), allHtml.join('\n\n'), 'utf8');
 writeFileSync(join(DIST_DIR, 'components.css'), allCss.join('\n'), 'utf8');
-if (allJs.length) writeFileSync(join(DIST_DIR, 'components.js'), allJs.join('\n\n'), 'utf8');
+if (allJs.length) {
+  // Deduplicate import statements across combined JS
+  const combinedJs = allJs.join('\n\n');
+  const importLines = new Set();
+  const bodyLines = [];
+  for (const line of combinedJs.split('\n')) {
+    if (line.startsWith('import ')) {
+      importLines.add(line);
+    } else {
+      bodyLines.push(line);
+    }
+  }
+  const deduped = [...importLines, '', ...bodyLines].join('\n');
+  writeFileSync(join(DIST_DIR, 'components.js'), deduped, 'utf8');
+}
 
 // Build index.html with inlined compiled HTML
 const indexSrc = resolve(ROOT, 'src/index.html');
