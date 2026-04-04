@@ -103,6 +103,12 @@ export function renderApp(root, compiledHtml) {
   return () => unsubs.forEach(fn => fn());
 }
 
+// Bind names whose values are arrays (rendered by wireGridLists, not text)
+const LIST_BINDS = new Set([
+  'artistCards', 'albumCards', 'queueItems', 'filteredTracks',
+  'trackListItems', 'breadcrumb', 'breadcrumbLabel',
+]);
+
 function wireTextBindings(root, unsubs) {
   const boundEls = root.querySelectorAll('[data-bodhi-bind]');
   for (const el of boundEls) {
@@ -110,9 +116,11 @@ function wireTextBindings(root, unsubs) {
     const sig = SIGNAL_MAP[bindName];
     if (!sig || typeof sig.subscribe !== 'function') continue;
 
-    // Skip list containers — those are handled by wireGridLists
-    const yantra = el.dataset.bodhiYantra;
-    if (yantra === 'sangraha' || yantra === 'suci') continue;
+    // Skip list/array signals — handled by wireGridLists or wireBreadcrumb
+    if (LIST_BINDS.has(bindName)) continue;
+
+    // Skip elements inside list containers (nested bind spans)
+    if (el.closest('[data-bodhi-yantra="sangraha"], [data-bodhi-yantra="suci"]')) continue;
 
     unsubs.push(sig.subscribe(value => {
       el.textContent = value ?? '';
@@ -173,78 +181,110 @@ function wireGridLists(root, unsubs) {
   // Artist grid
   const artistGrid = root.querySelector('[data-bodhi-component="ArtistsView"]');
   if (artistGrid) {
-    const template = artistGrid.querySelector('.artist-card');
-    if (template) {
-      template.remove();
-      unsubs.push(paginatedArtists.subscribe(artists => {
-        artistGrid.innerHTML = '';
-        for (const artist of artists) {
-          const card = template.cloneNode(true);
-          card.dataset.itemId = artist.name;
-          card.dataset.itemName = artist.name;
-          const nameEl = card.querySelector('.artist-name');
-          if (nameEl) nameEl.textContent = artist.name;
-          const countEl = card.querySelector('.artist-count');
-          if (countEl) countEl.textContent = `${artist.albumCount} album${artist.albumCount !== 1 ? 's' : ''}`;
-          // Re-wire click
-          card.addEventListener('click', () => selectArtist(artist.name));
-          artistGrid.appendChild(card);
-        }
-      }));
-    }
+    // Clear compiled template content
+    artistGrid.innerHTML = '';
+    unsubs.push(paginatedArtists.subscribe(artists => {
+      artistGrid.innerHTML = '';
+      for (const artist of artists) {
+        const card = document.createElement('article');
+        card.className = 'bindu artist-card';
+        card.dataset.bodhiYantra = 'bindu';
+        card.dataset.itemId = artist.name;
+        card.dataset.itemName = artist.name;
+        card.setAttribute('tabindex', '0');
+        card.setAttribute('role', 'button');
+        card.innerHTML = `
+          <h3 class="artist-name">${escapeHtml(artist.name)}</h3>
+          <p class="artist-count">${escapeHtml(artist.albumCount + ' album' + (artist.albumCount !== 1 ? 's' : ''))}</p>
+        `;
+        card.addEventListener('click', () => selectArtist(artist.name));
+        card.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectArtist(artist.name); }
+        });
+        artistGrid.appendChild(card);
+      }
+      renderPagination(artistGrid);
+    }));
   }
 
   // Album grid
   const albumGrid = root.querySelector('[data-bodhi-component="AlbumsView"]');
   if (albumGrid) {
-    const template = albumGrid.querySelector('.album-card');
-    if (template) {
-      template.remove();
-      unsubs.push(paginatedAlbums.subscribe(albums => {
-        albumGrid.innerHTML = '';
-        for (const album of albums) {
-          const card = template.cloneNode(true);
-          card.dataset.itemId = `${album.artist}|||${album.title}`;
-          card.dataset.itemName = album.title;
-          card.dataset.itemArtist = album.artist;
-          const titleEl = card.querySelector('.album-title');
-          if (titleEl) titleEl.textContent = album.title;
-          const artistEl = card.querySelector('.album-artist');
-          if (artistEl) artistEl.textContent = album.artist;
-          card.addEventListener('click', () => selectAlbum(album.artist, album.title));
-          albumGrid.appendChild(card);
-        }
-      }));
-    }
+    albumGrid.innerHTML = '';
+    unsubs.push(paginatedAlbums.subscribe(albums => {
+      albumGrid.innerHTML = '';
+      for (const album of albums) {
+        const card = document.createElement('article');
+        card.className = 'bindu album-card';
+        card.dataset.bodhiYantra = 'bindu';
+        card.dataset.itemId = `${album.artist}|||${album.title}`;
+        card.dataset.itemName = album.title;
+        card.dataset.itemArtist = album.artist;
+        card.setAttribute('tabindex', '0');
+        card.setAttribute('role', 'button');
+        card.innerHTML = `
+          <div class="album-art"></div>
+          <h3 class="album-title">${escapeHtml(album.title)}</h3>
+          <p class="album-artist">${escapeHtml(album.artist)}</p>
+        `;
+        card.addEventListener('click', () => selectAlbum(album.artist, album.title));
+        card.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectAlbum(album.artist, album.title); }
+        });
+        albumGrid.appendChild(card);
+      }
+      renderPagination(albumGrid);
+    }));
   }
 
   // Queue list
   const queueList = root.querySelector('[data-bodhi-component="QueueView"]');
   if (queueList) {
-    const template = queueList.querySelector('.queue-item');
-    if (template) {
-      template.remove();
-      unsubs.push(queue.subscribe(items => {
-        queueList.innerHTML = '';
-        for (const track of items) {
-          const row = template.cloneNode(true);
-          row.dataset.itemId = track.id;
-          const titleEl = row.querySelector('.queue-track-title');
-          if (titleEl) titleEl.textContent = track.title;
-          const artistEl = row.querySelector('.queue-track-artist');
-          if (artistEl) artistEl.textContent = track.artist;
-          const removeBtn = row.querySelector('.queue-remove');
-          if (removeBtn) {
-            removeBtn.addEventListener('click', (e) => {
-              e.stopPropagation();
-              removeFromQueue(track.id);
-            });
-          }
-          queueList.appendChild(row);
-        }
-      }));
-    }
+    queueList.innerHTML = '';
+    unsubs.push(queue.subscribe(items => {
+      queueList.innerHTML = '';
+      for (const track of items) {
+        const row = document.createElement('article');
+        row.className = 'bindu queue-item';
+        row.dataset.bodhiYantra = 'bindu';
+        row.dataset.itemId = track.id;
+        row.innerHTML = `
+          <span class="queue-track-title">${escapeHtml(track.title)}</span>
+          <span class="queue-track-artist">${escapeHtml(track.artist)}</span>
+          <button class="kriya queue-remove" type="button" aria-label="Remove from queue">✕</button>
+        `;
+        const removeBtn = row.querySelector('.queue-remove');
+        removeBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          removeFromQueue(track.id);
+        });
+        queueList.appendChild(row);
+      }
+    }));
   }
+}
+
+function renderPagination(container) {
+  const total = totalPages.get();
+  if (total <= 1) return;
+  const current = page.get();
+  const nav = document.createElement('nav');
+  nav.className = 'pagination';
+  nav.setAttribute('aria-label', 'Page navigation');
+  nav.innerHTML = `
+    <button class="kriya pagination-prev" type="button" aria-label="Previous page" ${current === 0 ? 'disabled' : ''}>‹ Prev</button>
+    <span class="pagination-info">Page ${current + 1} of ${total}</span>
+    <button class="kriya pagination-next" type="button" aria-label="Next page" ${current >= total - 1 ? 'disabled' : ''}>Next ›</button>
+  `;
+  nav.querySelector('.pagination-prev').addEventListener('click', prevPage);
+  nav.querySelector('.pagination-next').addEventListener('click', nextPage);
+  container.appendChild(nav);
+}
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
 }
 
 function wireBreadcrumb(root, unsubs) {

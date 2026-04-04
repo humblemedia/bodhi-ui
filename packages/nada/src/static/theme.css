@@ -412,6 +412,47 @@
   margin-bottom: 0.25rem;
 }
 
+/* ── Pagination ───────────────────────────────────────────── */
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--bodhi-akasa-svasa, 0.5rem);
+  padding: 0.75rem 0 0.25rem;
+  grid-column: 1 / -1;
+}
+
+.pagination-info {
+  font-size: 0.875rem;
+  color: var(--nada-text-muted);
+}
+
+.pagination button {
+  background: var(--nada-surface-alt);
+  border: 1px solid var(--nada-border);
+  border-radius: 4px;
+  padding: 0.25rem 0.75rem;
+  color: var(--nada-text);
+  cursor: pointer;
+  font-size: 0.875rem;
+}
+
+.pagination button:hover:not(:disabled) {
+  background: var(--nada-hover);
+  border-color: var(--nada-accent);
+}
+
+.pagination button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.pagination button:focus-visible {
+  outline: 2px solid var(--nada-focus-ring);
+  outline-offset: 2px;
+}
+
 /* ── Index Progress ───────────────────────────────────────── */
 
 .index-progress {
