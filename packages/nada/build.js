@@ -91,6 +91,18 @@ try {
   // No theme CSS — that's fine
 }
 
+// Copy Cetanā library to dist/lib/cetana/ (for import map resolution)
+const CETANA_LIB_DIR = resolve(ROOT, '..', 'cetana', 'src');
+try {
+  mkdirSync(join(DIST_DIR, 'lib', 'cetana'), { recursive: true });
+  const cetanaLibFiles = readdirSync(CETANA_LIB_DIR).filter(f => f.endsWith('.js'));
+  for (const f of cetanaLibFiles) {
+    copyFileSync(join(CETANA_LIB_DIR, f), join(DIST_DIR, 'lib', 'cetana', f));
+  }
+} catch (e) {
+  console.log('  Could not copy Cetanā library:', e.message);
+}
+
 // Copy cetana app modules to dist
 const CETANA_DIR = resolve(ROOT, 'src/cetana');
 try {
