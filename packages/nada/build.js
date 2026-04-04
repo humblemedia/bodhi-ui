@@ -65,11 +65,16 @@ try {
   writeFileSync(join(DIST_DIR, 'index.html'), generateIndexHtml(), 'utf8');
 }
 
-// Copy service worker
+// Copy static files (service worker, theme CSS)
 try {
   copyFileSync(join(STATIC_DIR, 'sw.js'), join(DIST_DIR, 'sw.js'));
 } catch {
   console.log('  No service worker found, skipping.');
+}
+try {
+  copyFileSync(join(STATIC_DIR, 'theme.css'), join(DIST_DIR, 'theme.css'));
+} catch {
+  // No theme CSS — that's fine
 }
 
 // Copy cetana app modules to dist

@@ -1,0 +1,431 @@
+/* Nada Theme — dark and light modes
+ * Uses Bodhi token naming. Tasteful, minimal, no gradients.
+ */
+
+/* ── Light Theme ──────────────────────────────────────────── */
+
+[data-bodhi-theme="light"] {
+  --nada-surface: #fafafa;
+  --nada-surface-alt: #f0f0f0;
+  --nada-text: #222222;
+  --nada-text-muted: #666666;
+  --nada-accent: #4a6fa5;
+  --nada-accent-text: #ffffff;
+  --nada-border: #e0e0e0;
+  --nada-now-playing-bg: #2a2a2a;
+  --nada-now-playing-text: #ffffff;
+  --nada-hover: rgba(0, 0, 0, 0.05);
+  --nada-card-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --nada-focus-ring: #4a6fa5;
+
+  background: var(--nada-surface);
+  color: var(--nada-text);
+}
+
+/* ── Dark Theme ───────────────────────────────────────────── */
+
+[data-bodhi-theme="dark"] {
+  --nada-surface: #1a1a1a;
+  --nada-surface-alt: #2a2a2a;
+  --nada-text: #eeeeee;
+  --nada-text-muted: #999999;
+  --nada-accent: #6b9fd4;
+  --nada-accent-text: #111111;
+  --nada-border: #333333;
+  --nada-now-playing-bg: #111111;
+  --nada-now-playing-text: #eeeeee;
+  --nada-hover: rgba(255, 255, 255, 0.06);
+  --nada-card-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --nada-focus-ring: #6b9fd4;
+
+  background: var(--nada-surface);
+  color: var(--nada-text);
+}
+
+/* ── Header (Siras) ───────────────────────────────────────── */
+
+.siras {
+  background: var(--nada-surface-alt);
+  border-bottom: 1px solid var(--nada-border);
+  padding: var(--bodhi-akasa-svasa, 0.5rem) var(--bodhi-akasa-vicara, 1rem);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.siras-identity {
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+/* ── Folder Bar ───────────────────────────────────────────── */
+
+.folder-bar {
+  background: var(--nada-surface);
+  border-bottom: 1px solid var(--nada-border);
+  padding: var(--bodhi-akasa-sparsa, 0.125rem) var(--bodhi-akasa-vicara, 1rem);
+  display: flex;
+  align-items: center;
+  gap: var(--bodhi-akasa-svasa, 0.5rem);
+}
+
+.folder-path {
+  color: var(--nada-text-muted);
+  font-size: 0.875rem;
+  flex: 1;
+}
+
+.folder-btn {
+  background: var(--nada-accent);
+  color: var(--nada-accent-text);
+  border: none;
+  border-radius: 4px;
+  padding: 0.375rem 0.75rem;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.folder-btn:hover {
+  opacity: 0.9;
+}
+
+.folder-btn:focus-visible {
+  outline: 2px solid var(--nada-focus-ring);
+  outline-offset: 2px;
+}
+
+/* ── Tab Bar ──────────────────────────────────────────────── */
+
+.tab-bar {
+  display: flex;
+  border-bottom: 1px solid var(--nada-border);
+  background: var(--nada-surface);
+}
+
+.tab-btn {
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: 0.5rem 1rem;
+  color: var(--nada-text-muted);
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.tab-btn:hover {
+  color: var(--nada-text);
+  background: var(--nada-hover);
+}
+
+.tab-btn[aria-selected="true"] {
+  color: var(--nada-accent);
+  border-bottom-color: var(--nada-accent);
+}
+
+.tab-btn:focus-visible {
+  outline: 2px solid var(--nada-focus-ring);
+  outline-offset: -2px;
+}
+
+/* ── Breadcrumb ───────────────────────────────────────────── */
+
+.breadcrumb-nav {
+  padding: var(--bodhi-akasa-sparsa, 0.125rem) var(--bodhi-akasa-vicara, 1rem);
+  font-size: 0.875rem;
+  color: var(--nada-text-muted);
+  border-bottom: 1px solid var(--nada-border);
+}
+
+.breadcrumb-link {
+  background: none;
+  border: none;
+  color: var(--nada-accent);
+  cursor: pointer;
+  font-size: inherit;
+  padding: 0;
+}
+
+.breadcrumb-link:hover {
+  text-decoration: underline;
+}
+
+.breadcrumb-link:focus-visible {
+  outline: 2px solid var(--nada-focus-ring);
+  outline-offset: 2px;
+}
+
+.breadcrumb-sep {
+  color: var(--nada-text-muted);
+  margin: 0 0.25rem;
+}
+
+.breadcrumb-current {
+  color: var(--nada-text);
+}
+
+/* ── Main Content (Garbha) ────────────────────────────────── */
+
+.garbha-content {
+  flex: 1;
+  overflow: hidden;
+  padding: var(--bodhi-akasa-vicara, 1rem);
+}
+
+/* ── Cards — artist and album grids ──────────────────────── */
+
+.artists-grid,
+.albums-grid {
+  gap: var(--bodhi-akasa-vicara, 1rem);
+}
+
+.artist-card,
+.album-card {
+  background: var(--nada-surface-alt);
+  border: 1px solid var(--nada-border);
+  border-radius: 6px;
+  padding: var(--bodhi-akasa-vicara, 1rem);
+  cursor: pointer;
+  box-shadow: var(--nada-card-shadow);
+}
+
+.artist-card:hover,
+.album-card:hover {
+  background: var(--nada-hover);
+  border-color: var(--nada-accent);
+}
+
+.artist-card:focus-visible,
+.album-card:focus-visible {
+  outline: 2px solid var(--nada-focus-ring);
+  outline-offset: 2px;
+}
+
+.artist-name,
+.album-title {
+  font-size: 1rem;
+  font-weight: 500;
+  margin-bottom: 0.25rem;
+}
+
+.artist-count,
+.album-artist {
+  font-size: 0.875rem;
+  color: var(--nada-text-muted);
+}
+
+.album-art {
+  background: var(--nada-surface);
+  border-radius: 4px;
+  aspect-ratio: 1;
+  margin-bottom: 0.5rem;
+}
+
+/* ── Track list / Queue ──────────────────────────────────── */
+
+.track-list,
+.queue-list {
+  list-style: none;
+}
+
+.track-row,
+.queue-item {
+  display: flex;
+  align-items: center;
+  gap: var(--bodhi-akasa-svasa, 0.5rem);
+  padding: 0.5rem var(--bodhi-akasa-vicara, 1rem);
+  border-bottom: 1px solid var(--nada-border);
+  cursor: pointer;
+}
+
+.track-row:hover,
+.queue-item:hover {
+  background: var(--nada-hover);
+}
+
+.track-num {
+  color: var(--nada-text-muted);
+  width: 2rem;
+  text-align: right;
+  font-size: 0.875rem;
+}
+
+.track-name,
+.queue-track-title {
+  flex: 1;
+}
+
+.track-duration {
+  color: var(--nada-text-muted);
+  font-size: 0.875rem;
+}
+
+.queue-track-artist {
+  color: var(--nada-text-muted);
+  font-size: 0.875rem;
+}
+
+.queue-remove {
+  background: none;
+  border: none;
+  color: var(--nada-text-muted);
+  cursor: pointer;
+  font-size: 0.875rem;
+  padding: 0.25rem;
+}
+
+.queue-remove:hover {
+  color: var(--nada-text);
+}
+
+.queue-remove:focus-visible {
+  outline: 2px solid var(--nada-focus-ring);
+  outline-offset: 2px;
+}
+
+/* ── Now Playing (Pada) ──────────────────────────────────── */
+
+.now-playing {
+  background: var(--nada-now-playing-bg);
+  color: var(--nada-now-playing-text);
+  border-top: 1px solid var(--nada-border);
+  padding: 0.5rem var(--bodhi-akasa-vicara, 1rem);
+  display: flex;
+  align-items: center;
+  gap: var(--bodhi-akasa-vicara, 1rem);
+}
+
+.track-title {
+  font-weight: 500;
+  font-size: 0.875rem;
+}
+
+.track-artist {
+  font-size: 0.8125rem;
+  opacity: 0.8;
+}
+
+/* ── Playback Controls ────────────────────────────────────── */
+
+.playback-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--bodhi-akasa-svasa, 0.5rem);
+}
+
+.playback-controls button {
+  background: none;
+  border: none;
+  color: var(--nada-now-playing-text);
+  font-size: 1.25rem;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+}
+
+.playback-controls button:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.playback-controls button:focus-visible {
+  outline: 2px solid var(--nada-focus-ring);
+  outline-offset: 2px;
+}
+
+/* ── Volume Slider ────────────────────────────────────────── */
+
+.volume-slider {
+  width: 100px;
+  accent-color: var(--nada-accent);
+}
+
+/* ── Settings ─────────────────────────────────────────────── */
+
+.settings {
+  padding: var(--bodhi-akasa-vicara, 1rem);
+}
+
+.settings h2 {
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.setting-group {
+  margin-bottom: 1.5rem;
+}
+
+.setting-group h3 {
+  font-size: 1rem;
+  color: var(--nada-text-muted);
+  margin-bottom: 0.5rem;
+}
+
+.setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--nada-border);
+}
+
+.theme-toggle {
+  background: var(--nada-surface-alt);
+  border: 1px solid var(--nada-border);
+  border-radius: 4px;
+  padding: 0.375rem 0.75rem;
+  color: var(--nada-text);
+  cursor: pointer;
+  font-size: 0.875rem;
+}
+
+.theme-toggle:hover {
+  background: var(--nada-hover);
+}
+
+.theme-toggle:focus-visible {
+  outline: 2px solid var(--nada-focus-ring);
+  outline-offset: 2px;
+}
+
+/* ── Album Detail ─────────────────────────────────────────── */
+
+.album-detail {
+  padding: var(--bodhi-akasa-vicara, 1rem);
+}
+
+.album-header {
+  display: flex;
+  gap: var(--bodhi-akasa-vicara, 1rem);
+  margin-bottom: 1rem;
+}
+
+.album-art-large {
+  width: 160px;
+  height: 160px;
+  background: var(--nada-surface-alt);
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+
+.album-info h2 {
+  font-size: 1.25rem;
+  margin-bottom: 0.25rem;
+}
+
+/* ── Index Progress ───────────────────────────────────────── */
+
+.index-progress {
+  font-size: 0.875rem;
+  color: var(--nada-text-muted);
+}
+
+/* ── Reduced Motion ───────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
