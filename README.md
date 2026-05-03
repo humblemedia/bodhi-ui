@@ -94,8 +94,3 @@ The first application built with Bodhi. Nada plays audio files from your filesys
 ## License
 
 MIT
-
-## Related
-
-- [Vajra-vāk](https://github.com/yourusername/vajra-vak) — The linguistic framework Bodhi instantiates in the interface domain
-- [Seva](https://github.com/yourusername/seva) — Coercive control detection (Bodhi's interpersonal parallel)
